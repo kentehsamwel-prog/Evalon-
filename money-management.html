@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Money Management — VIP Signal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#05070D; --panel:rgba(20,26,45,0.72); --panel-2:rgba(255,255,255,0.045); --line:rgba(255,255,255,0.09);
+    --gold:#FFB020; --gold-soft:#FFD37A; --green:#00E5A0; --red:#FF4D5E;
+    --text:#F6F8FC; --sub:#8C97BD; --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+  .wrap{max-width:520px;margin:0 auto;padding:24px 16px 60px;}
+
+  .back-link{display:inline-flex;align-items:center;gap:6px;color:var(--sub);text-decoration:none;font-size:13px;margin-bottom:16px;}
+
+  .brand{display:flex;align-items:center;gap:11px;margin-bottom:20px;}
+  .brand-mark{width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,var(--gold),#C97A1F);
+    display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;
+    box-shadow:0 0 0 1px rgba(255,176,32,0.3), 0 8px 24px rgba(255,176,32,0.35);}
+  .brand-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;}
+  .brand-sub{font-size:10.5px;color:var(--sub);letter-spacing:1.5px;text-transform:uppercase;}
+
+  .lang-toggle{display:flex;gap:8px;margin-bottom:20px;}
+  .lang-btn{flex:1;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);
+    color:var(--sub);font-size:13.5px;font-weight:600;cursor:pointer;}
+  .lang-btn.active{border-color:var(--gold);color:var(--text);background:rgba(255,176,32,0.1);}
+
+  h1{font-family:'Space Grotesk',sans-serif;font-size:22px;margin:0 0 8px;}
+  .subtitle{font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:20px;}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 16px;
+    margin-bottom:18px;backdrop-filter:blur(14px);}
+  .card-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;
+    display:flex;align-items:center;gap:7px;color:var(--gold-soft);}
+  .card-txt{font-size:12.5px;color:var(--sub);line-height:1.6;}
+
+  table{width:100%;border-collapse:collapse;margin-top:6px;}
+  th,td{padding:10px 8px;text-align:left;font-size:13px;border-bottom:1px solid var(--line);}
+  th{color:var(--gold-soft);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.5px;text-transform:uppercase;}
+  td.bal{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);text-align:right;}
+  td.day{color:var(--sub);}
+  tr:last-child td{border-bottom:none;}
+
+  .warn-box{background:rgba(255,77,94,0.08);border:1px solid rgba(255,77,94,0.3);border-radius:12px;
+    padding:14px 15px;margin-bottom:18px;font-size:12.5px;color:#FFB4BC;line-height:1.6;}
+  .warn-box b{color:#fff;}
+
+  .rule-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;}
+  .rule-dot{width:22px;height:22px;border-radius:50%;background:rgba(255,176,32,0.15);border:1px solid rgba(255,176,32,0.3);
+    display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:1px;color:var(--gold-soft);font-weight:700;}
+  .rule-txt{font-size:12.5px;color:var(--sub);line-height:1.6;}
+  .rule-txt b{color:var(--text);}
+
+  .whatsapp-cta{display:flex;align-items:center;justify-content:center;width:100%;padding:15px;border-radius:12px;
+    background:linear-gradient(135deg,#00E5A0,#00A876);color:#052A1D;font-size:14.5px;font-weight:700;
+    text-decoration:none;box-shadow:0 10px 26px rgba(0,229,160,0.28);margin-top:6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back-link" href="index.html" data-sw="← Rudi kwenye Usajili" data-en="← Back to Registration">← Rudi kwenye Usajili</a>
+
+  <div class="brand">
+    <div class="brand-mark">📈</div>
+    <div>
+      <div class="brand-name" data-sw="Money Management" data-en="Money Management">Money Management</div>
+      <div class="brand-sub">Trading Signals &amp; AI Engines</div>
+    </div>
+  </div>
+
+  <div class="lang-toggle">
+    <button type="button" class="lang-btn active" id="btnSw">🇹🇿 Kiswahili</button>
+    <button type="button" class="lang-btn" id="btnEn">🇬🇧 English</button>
+  </div>
+
+  <h1 data-sw="Jinsi Signal Zetu Zinavyofanya Kazi" data-en="How Our Signals Work">Jinsi Signal Zetu Zinavyofanya Kazi</h1>
+  <div class="subtitle" data-sw="Kila siku tunatuma signal MOJA tu. Ukiifunga kwenye profit, unapata ongezeko la 5% ya mtaji wako siku hiyo." data-en="Every day we send just ONE signal. If you close it in profit, you gain 5% of your capital that day.">
+    Kila siku tunatuma signal MOJA tu. Ukiifunga kwenye profit, unapata ongezeko la 5% ya mtaji wako siku hiyo.
+  </div>
+
+  <div class="card">
+    <div class="card-title">📅 <span data-sw="Mfano: Wiki 1 (kuanzia $50)" data-en="Example: Week 1 (starting from $50)">Mfano: Wiki 1 (kuanzia $50)</span></div>
+    <div class="card-txt" data-sw="Hii ni MFANO WA HISABATI TU — unaodhania ushindi kwa siku zote 7. Kwenye uhalisia wa soko, hutashinda kila siku." data-en="This is a MATH EXAMPLE ONLY — assuming a win every single day. In real market conditions, you will not win every day.">
+      Hii ni MFANO WA HISABATI TU — unaodhania ushindi kwa siku zote 7. Kwenye uhalisia wa soko, hutashinda kila siku.
+    </div>
+    <table>
+      <tr><th data-sw="Siku" data-en="Day">Siku</th><th data-sw="Balance (+5%)" data-en="Balance (+5%)">Balance (+5%)</th></tr>
+      <tr><td class="day">1</td><td class="bal">$52.50</td></tr>
+      <tr><td class="day">2</td><td class="bal">$55.12</td></tr>
+      <tr><td class="day">3</td><td class="bal">$57.88</td></tr>
+      <tr><td class="day">4</td><td class="bal">$60.78</td></tr>
+      <tr><td class="day">5</td><td class="bal">$63.81</td></tr>
+      <tr><td class="day">6</td><td class="bal">$67.00</td></tr>
+      <tr><td class="day">7</td><td class="bal">$70.36</td></tr>
+    </table>
+  </div>
+
+  <div class="warn-box">
+    ⚠️ <b data-sw="MUHIMU:" data-en="IMPORTANT:">MUHIMU:</b>
+    <span data-sw="Jedwali hili SI ahadi ya faida wala uhakika wa kila siku kushinda. Soko lina siku za kushinda na siku za kukosa. Usitegemee kufikia namba hizi kila wiki, mwezi, au mwaka — dhumuni lake ni kukuonyesha dhana ya 5% kwa siku, si utabiri wa fedha halisi utakazopata." data-en="This table is NOT a promise of profit or a guarantee of winning every day. The market has winning days and losing days. Do not expect to reach these numbers every week, month, or year — its purpose is only to show you the 5%-per-day concept, not a forecast of the real money you will earn.">
+      Jedwali hili SI ahadi ya faida wala uhakika wa kila siku kushinda. Soko lina siku za kushinda na siku za kukosa. Usitegemee kufikia namba hizi kila wiki, mwezi, au mwaka — dhumuni lake ni kukuonyesha dhana ya 5% kwa siku, si utabiri wa fedha halisi utakazopata.
+    </span>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🚫 <span data-sw="Sifanyi Biashara Kwa Niaba Ya Mtu" data-en="I Do Not Trade On Anyone's Behalf">Sifanyi Biashara Kwa Niaba Ya Mtu</span></div>
+
+    <div class="rule-item">
+      <div class="rule-dot">1</div>
+      <div class="rule-txt" data-sw="<b>Sipokei fedha za mtu wala simfanyii biashara.</b> Kila mtu anatakiwa kufanya biashara yake mwenyewe." data-en="<b>I do not accept anyone's money nor trade on their behalf.</b> Everyone must do their own trading themselves.">
+        <b>Sipokei fedha za mtu wala simfanyii biashara.</b> Kila mtu anatakiwa kufanya biashara yake mwenyewe.
+      </div>
+    </div>
+
+    <div class="rule-item">
+      <div class="rule-dot">2</div>
+      <div class="rule-txt" data-sw="Jifunze kwa muda wako, tumia <b>Demo Account</b> kwanza kuelewa soko vizuri kabla ya kutumia fedha halisi." data-en="Learn at your own pace, use a <b>Demo Account</b> first to understand the market well before using real money.">
+        Jifunze kwa muda wako, tumia <b>Demo Account</b> kwanza kuelewa soko vizuri kabla ya kutumia fedha halisi.
+      </div>
+    </div>
+
+    <div class="rule-item">
+      <div class="rule-dot">3</div>
+      <div class="rule-txt" data-sw="<b>Wahepuke &quot;ma-manager&quot;</b> wanaokwambia 'weka pesa nikufanyie biashara' — hao mara nyingi wataiba account yako. Mimi sifanyi aina hiyo ya biashara." data-en="<b>Avoid &quot;managers&quot;</b> who tell you 'send me money and I'll trade for you' — they will often steal your account. I do not offer that kind of service.">
+        Wahepuke "ma-manager" wanaokwambia 'weka pesa nikufanyie biashara' — hao mara nyingi wataiba account yako. Mimi sifanyi aina hiyo ya biashara.
+      </div>
+    </div>
+
+    <div class="rule-item">
+      <div class="rule-dot">4</div>
+      <div class="rule-txt" data-sw="Fuata kanuni na signal kwa taratibu — utaelewa vizuri zaidi kuliko kutumia tamaa." data-en="Follow the rules and signals patiently — you'll understand far better than acting out of greed.">
+        Fuata kanuni na signal kwa taratibu — utaelewa vizuri zaidi kuliko kutumia tamaa.
+      </div>
+    </div>
+
+    <div class="rule-item">
+      <div class="rule-dot">5</div>
+      <div class="rule-txt" data-sw="Ukihitaji ushauri wowote, nipo WhatsApp — uliza kabla ya kuamua, ili kuepuka mitego ya matapeli." data-en="If you need any advice, I'm on WhatsApp — ask before you decide, to avoid scammer traps.">
+        Ukihitaji ushauri wowote, nipo WhatsApp — uliza kabla ya kuamua, ili kuepuka mitego ya matapeli.
+      </div>
+    </div>
+
+    <a class="whatsapp-cta" href="https://wa.me/255745621218" target="_blank" rel="noopener">
+      <span data-sw="💬 Uliza Ushauri WhatsApp" data-en="💬 Ask for Advice on WhatsApp">💬 Uliza Ushauri WhatsApp</span>
+    </a>
+  </div>
+</div>
+
+<script>
+function setLang(lang){
+  document.querySelectorAll('[data-sw]').forEach(el=>{
+    const val = el.dataset[lang];
+    if(val !== undefined) el.innerHTML = val;
+  });
+  document.getElementById('btnSw').classList.toggle('active', lang==='sw');
+  document.getElementById('btnEn').classList.toggle('active', lang==='en');
+}
+document.getElementById('btnSw').addEventListener('click', ()=>setLang('sw'));
+document.getElementById('btnEn').addEventListener('click', ()=>setLang('en'));
+</script>
+</body>
+</html>

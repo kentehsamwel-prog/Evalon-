@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usajili — Trading VIP</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FFB020">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VIP Usajili">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#05070D; --panel:rgba(20,26,45,0.72); --panel-2:rgba(255,255,255,0.045); --line:rgba(255,255,255,0.09);
+    --gold:#FFB020; --gold-soft:#FFD37A; --green:#00E5A0; --red:#FF4D5E;
+    --text:#F6F8FC; --sub:#8C97BD; --radius:16px;
+    --glow1:rgba(255,176,32,0.16); --glow2:rgba(0,229,160,0.13);
+    --candle-up:rgba(0,229,160,0.55); --candle-down:rgba(255,77,94,0.5);
+  }
+  body[data-theme="ocean"]{
+    --bg:#040F1F; --panel:rgba(12,34,58,0.72); --panel-2:rgba(255,255,255,0.05); --line:rgba(120,200,255,0.14);
+    --gold:#39C0FF; --gold-soft:#8BDBFF; --green:#00E5A0; --red:#FF4D5E; --text:#EAF6FF; --sub:#6FA0C4;
+    --glow1:rgba(57,192,255,0.22); --glow2:rgba(0,229,160,0.14);
+    --candle-up:rgba(0,229,160,0.55); --candle-down:rgba(255,77,94,0.5);
+  }
+  body[data-theme="purple"]{
+    --bg:#0F0722; --panel:rgba(38,22,64,0.72); --panel-2:rgba(255,255,255,0.05); --line:rgba(185,132,255,0.16);
+    --gold:#B984FF; --gold-soft:#D9B8FF; --green:#00E5A0; --red:#FF4D5E; --text:#F6EFFF; --sub:#9C87C4;
+    --glow1:rgba(185,132,255,0.24); --glow2:rgba(0,229,160,0.12);
+    --candle-up:rgba(0,229,160,0.5); --candle-down:rgba(255,77,94,0.5);
+  }
+  body[data-theme="emerald"]{
+    --bg:#031C13; --panel:rgba(10,50,38,0.72); --panel-2:rgba(255,255,255,0.05); --line:rgba(47,230,160,0.16);
+    --gold:#2FE6A0; --gold-soft:#8FF5CE; --green:#00C2FF; --red:#FF4D5E; --text:#EFFFF8; --sub:#63B096;
+    --glow1:rgba(47,230,160,0.22); --glow2:rgba(0,194,255,0.14);
+    --candle-up:rgba(47,230,160,0.55); --candle-down:rgba(255,77,94,0.5);
+  }
+  body[data-theme="sunset"]{
+    --bg:#1F0D04; --panel:rgba(64,30,14,0.72); --panel-2:rgba(255,255,255,0.05); --line:rgba(255,122,69,0.16);
+    --gold:#FF7A45; --gold-soft:#FFAE85; --green:#FFC53D; --red:#FF4D5E; --text:#FFF6F0; --sub:#C08A6C;
+    --glow1:rgba(255,122,69,0.24); --glow2:rgba(255,197,61,0.14);
+    --candle-up:rgba(255,197,61,0.5); --candle-down:rgba(255,77,94,0.5);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 900px 600px at 20% -10%, var(--glow1), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 110%, var(--glow2), transparent 60%),
+      var(--bg);
+    color:var(--text); font-family:'Inter',sans-serif;
+    min-height:100vh; position:relative; transition:background .3s ease;
+  }
+  .glow-orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;}
+  .glow-orb.g1{width:340px;height:340px;background:var(--glow1);top:-120px;right:-100px;}
+  .glow-orb.g2{width:300px;height:300px;background:var(--glow2);bottom:-100px;left:-100px;}
+  .bg-candles{position:fixed;inset:0;z-index:0;opacity:0.10;
+    background-image:repeating-linear-gradient(90deg,
+      transparent 0 6px, var(--candle-up) 6px 9px, transparent 9px 34px,
+      var(--candle-down) 34px 37px, transparent 37px 60px);
+    background-size:60px 100%;
+    mask-image:linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+  }
+
+  .wrap{max-width:520px;margin:0 auto;padding:24px 16px 110px;position:relative;z-index:1;}
+
+  .brand{display:flex;align-items:center;gap:11px;margin-bottom:16px;}
+  .brand-mark{width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,var(--gold),#C97A1F);
+    display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;
+    box-shadow:0 0 0 1px rgba(255,176,32,0.3), 0 8px 24px rgba(255,176,32,0.35);}
+  .brand-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;letter-spacing:0.4px;}
+  .brand-sub{font-size:10.5px;color:var(--sub);letter-spacing:1.5px;text-transform:uppercase;}
+
+  .rules-tape{width:100vw;margin-left:calc(50% - 50vw);overflow:hidden;position:relative;
+    border-bottom:1px solid var(--line);background:rgba(255,176,32,0.07);padding:7px 0;margin-bottom:18px;}
+  .rules-track{display:flex;gap:60px;white-space:nowrap;width:max-content;animation:rulesMove 22s linear infinite;
+    font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;color:var(--gold-soft);letter-spacing:0.3px;}
+  @keyframes rulesMove{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+  .lang-toggle{display:flex;gap:8px;margin-bottom:20px;}
+  .lang-btn{flex:1;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);
+    color:var(--sub);font-size:13.5px;font-weight:600;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .lang-btn.active{border-color:var(--gold);color:var(--text);background:rgba(255,176,32,0.1);}
+
+  .intro-note{font-size:12.5px;color:var(--sub);line-height:1.6;margin-bottom:22px;padding:12px 14px;
+    background:var(--panel-2);border:1px solid var(--line);border-radius:12px;}
+
+  .explain-block{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 16px;
+    margin-bottom:18px;backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+  .explain-title{font-family:'Space Grotesk',sans-serif;font-size:15.5px;font-weight:700;margin:0 0 8px;
+    display:flex;align-items:center;gap:8px;color:var(--gold-soft);}
+  .explain-body{font-size:13px;color:var(--text);line-height:1.65;}
+
+  .services-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;margin:4px 0 12px;
+    display:flex;align-items:center;gap:8px;}
+  .service-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 15px;
+    margin-bottom:12px;backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,0.3);position:relative;overflow:hidden;}
+  .service-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--gold),var(--green));}
+  .service-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .service-icon{width:34px;height:34px;border-radius:9px;background:rgba(0,229,160,0.12);border:1px solid rgba(0,229,160,0.3);
+    display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+  .service-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14.5px;}
+  .service-badge{margin-left:auto;font-size:10px;font-weight:700;color:#052A1D;background:var(--green);
+    padding:3px 8px;border-radius:20px;letter-spacing:0.3px;white-space:nowrap;}
+  .service-body{font-size:12.5px;color:var(--sub);line-height:1.6;}
+  .services-wrap{margin-bottom:22px;}
+
+  .proof-wrap{margin-bottom:22px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:17px 16px;backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+  .proof-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+  .proof-sub{font-size:12px;color:var(--sub);line-height:1.55;margin-bottom:12px;}
+  .proof-img{width:100%;border-radius:12px;border:1px solid var(--line);display:block;}
+  .urgency-banner{margin-top:14px;padding:13px 15px;border-radius:12px;background:rgba(255,176,32,0.12);
+    border:1px solid rgba(255,176,32,0.35);font-size:12.5px;color:var(--gold-soft);line-height:1.55;
+    font-weight:600;text-align:center;}
+
+  .follow-wrap{margin-bottom:22px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 16px;backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+  .follow-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;margin:0 0 6px;display:flex;align-items:center;gap:8px;}
+  .follow-sub{font-size:12.5px;color:var(--sub);line-height:1.55;margin-bottom:14px;}
+  .follow-btns{display:flex;flex-direction:column;gap:10px;}
+  .follow-btn{display:flex;align-items:center;gap:12px;padding:13px 15px;border-radius:12px;text-decoration:none;
+    color:var(--text);font-weight:600;font-size:14px;transition:.15s;border:1px solid var(--line);}
+  .follow-btn:active{transform:scale(0.98);}
+  .follow-btn.tiktok{background:linear-gradient(135deg,#111,#000);border-color:#333;}
+  .follow-btn.youtube{background:linear-gradient(135deg,#FF0000,#B60000);border-color:#B60000;}
+  .follow-btn.whatsappgroup{background:linear-gradient(135deg,#25D366,#128C4A);border-color:#128C4A;}
+  .follow-icon{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+  .follow-text{display:flex;flex-direction:column;gap:1px;}
+  .follow-text small{font-weight:400;font-size:11px;opacity:0.8;}
+
+  /* Install App */
+  .install-wrap{margin-bottom:22px;background:linear-gradient(135deg, rgba(255,176,32,0.12), rgba(0,229,160,0.10));
+    border:1px solid var(--line);border-radius:var(--radius);padding:17px 16px;display:none;align-items:center;gap:13px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+  .install-wrap.show{display:flex;}
+  .install-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--gold),#C97A1F);
+    display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+  .install-txt{flex:1;min-width:0;}
+  .install-txt strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:14px;margin-bottom:2px;}
+  .install-txt span{font-size:11.5px;color:var(--sub);}
+  .install-btn{flex-shrink:0;padding:10px 16px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--gold),#C97A1F);
+    color:#1A0F00;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;}
+  .install-btn:active{transform:scale(0.96);}
+  .ios-tip{margin-bottom:22px;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:13px 15px;
+    font-size:12px;color:var(--sub);line-height:1.6;display:none;}
+  .ios-tip.show{display:block;}
+
+  /* Theme picker */
+  .theme-wrap{margin-bottom:20px;}
+  .theme-label{font-size:11.5px;color:var(--sub);letter-spacing:0.5px;margin-bottom:8px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+  .theme-row{display:flex;gap:10px;}
+  .theme-swatch{width:40px;height:40px;border-radius:50%;cursor:pointer;border:2px solid transparent;flex-shrink:0;
+    position:relative;transition:.15s;}
+  .theme-swatch.active{border-color:#fff;transform:scale(1.08);}
+  .theme-swatch.active::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:14px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,0.6);}
+
+  /* Weekend OTC banner */
+  .weekend-banner{display:none;align-items:center;gap:10px;background:rgba(255,176,32,0.1);
+    border:1px solid rgba(255,176,32,0.35);border-radius:12px;padding:12px 14px;margin-bottom:18px;}
+  .weekend-banner.show{display:flex;}
+  .weekend-icon{font-size:22px;flex-shrink:0;}
+  .weekend-txt{font-size:12px;color:var(--gold-soft);line-height:1.5;}
+  .weekend-txt b{color:var(--text);}
+
+  /* Welcome toast */
+  .welcome-toast{position:fixed;top:14px;left:14px;right:14px;max-width:480px;margin:0 auto;z-index:50;
+    background:rgba(14,18,30,0.95);backdrop-filter:blur(18px);border:1px solid var(--gold);border-radius:14px;
+    padding:14px 14px;box-shadow:0 16px 40px rgba(0,0,0,0.5);display:flex;gap:11px;align-items:flex-start;
+    transform:translateY(-120%);opacity:0;transition:transform .4s ease, opacity .4s ease;}
+  .welcome-toast.show{transform:translateY(0);opacity:1;}
+  .welcome-toast-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#C97A1F);
+    display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .welcome-toast-body{flex:1;min-width:0;}
+  .welcome-toast-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13.5px;margin-bottom:3px;}
+  .welcome-toast-sub{font-size:11.5px;color:var(--sub);line-height:1.5;}
+  .welcome-toast-close{flex-shrink:0;background:none;border:none;color:var(--sub);font-size:16px;cursor:pointer;padding:2px 4px;}
+
+  fieldset{border:none;padding:0;margin:0 0 20px;}
+  .field{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 16px;
+    backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,0.3);margin-bottom:20px;}
+  .field-q{font-family:'Space Grotesk',sans-serif;font-size:15.5px;font-weight:600;line-height:1.4;margin:0 0 14px;}
+  .field-num{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--gold-soft);letter-spacing:1px;margin-bottom:6px;text-transform:uppercase;}
+
+  input[type=text]{width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:13px 14px;
+    color:var(--text);font-size:14.5px;font-family:'Inter',sans-serif;outline:none;transition:.2s;}
+  input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,176,32,0.12);}
+  input[type=text]::placeholder{color:#5A6688;}
+
+  select{width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:13px 14px;
+    color:var(--text);font-size:14.5px;font-family:'Inter',sans-serif;outline:none;appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='8'><path d='M1 1l6 6 6-6' stroke='%238C99B8' stroke-width='2' fill='none'/></svg>");
+    background-repeat:no-repeat;background-position:right 14px center;}
+  select:focus{border-color:var(--gold);}
+
+  .options{display:flex;flex-direction:column;gap:9px;}
+  .opt{position:relative;display:flex;align-items:center;gap:11px;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:10px;padding:12px 13px;cursor:pointer;transition:.15s;}
+  .opt input{position:absolute;opacity:0;width:0;height:0;}
+  .opt.selected{border-color:var(--gold);background:rgba(255,176,32,0.09);}
+  .opt-dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--sub);flex-shrink:0;position:relative;}
+  .opt.selected .opt-dot{border-color:var(--gold);}
+  .opt.selected .opt-dot::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--gold);}
+  .opt-text{font-size:14px;font-weight:500;}
+
+  .other-input{margin-top:10px;display:none;}
+  .other-input.show{display:block;}
+
+  .risk-note{margin-bottom:20px;padding:14px 15px;border-radius:12px;background:rgba(255,77,94,0.08);
+    border:1px solid rgba(255,77,94,0.3);font-size:12.5px;color:#FFB4BC;line-height:1.55;}
+
+  .footer-note{text-align:center;font-size:11px;color:#4A5478;margin-top:8px;letter-spacing:0.3px;}
+
+  .cta-wrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px 17px;
+    margin-bottom:20px;backdrop-filter:blur(16px);box-shadow:0 12px 34px rgba(0,0,0,0.35);}
+  .cta-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;margin:0 0 14px;display:flex;align-items:center;gap:8px;}
+  .cta-tier{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .cta-tier-badge{flex-shrink:0;min-width:52px;text-align:center;padding:7px 10px;border-radius:9px;font-weight:700;font-size:13px;
+    background:linear-gradient(135deg,var(--gold),#C97A1F);color:#1A0F00;}
+  .cta-tier-badge.alt{background:linear-gradient(135deg,var(--green),#00A876);color:#052A1D;}
+  .cta-tier-txt{font-size:12.5px;color:var(--sub);line-height:1.55;}
+
+  .bonus-example{background:var(--panel-2);border:1px dashed var(--line);border-radius:12px;padding:14px 15px;margin:14px 0;}
+  .bonus-example-title{font-family:'Space Grotesk',sans-serif;font-size:13.5px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+  .bonus-calc{display:flex;flex-direction:column;gap:6px;}
+  .bonus-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--sub);padding:5px 0;}
+  .bonus-row b{color:var(--text);font-weight:700;}
+  .bonus-row.plus b{color:var(--green);}
+  .bonus-row.total{border-top:1px solid var(--line);margin-top:4px;padding-top:9px;}
+  .bonus-row.total span{color:var(--text);font-weight:600;}
+  .bonus-row.total b{color:var(--gold-soft);font-size:15.5px;}
+
+  .promo-box{display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px dashed var(--gold);
+    border-radius:12px;padding:12px 14px;margin-bottom:16px;}
+  .promo-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sub);letter-spacing:1px;flex-shrink:0;}
+  .promo-code{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:var(--gold-soft);letter-spacing:1.5px;flex:1;}
+  .promo-copy{flex-shrink:0;padding:8px 13px;border-radius:8px;border:1px solid var(--gold);background:transparent;
+    color:var(--gold-soft);font-size:12px;font-weight:600;cursor:pointer;}
+  .promo-copy:active{transform:scale(0.95);}
+
+  .register-btn{display:flex;align-items:center;justify-content:center;width:100%;padding:17px;border-radius:12px;
+    background:linear-gradient(135deg,#00E5A0,#00A876);color:#052A1D;font-size:16px;font-weight:700;text-decoration:none;
+    box-shadow:0 12px 30px rgba(0,229,160,0.3);margin-bottom:14px;}
+  .register-btn:active{transform:scale(0.98);}
+  .cta-footnote{font-size:12px;color:var(--sub);line-height:1.6;margin-bottom:14px;text-align:center;}
+  .id-step{background:var(--panel-2);border:1px solid rgba(255,77,94,0.3);border-radius:14px;padding:15px;margin-bottom:16px;}
+
+  .guide-block{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 16px;margin-bottom:14px;
+    backdrop-filter:blur(14px);}
+  .guide-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;
+    display:flex;align-items:center;gap:7px;color:var(--gold-soft);}
+  .guide-txt{font-size:12.5px;color:var(--sub);line-height:1.6;}
+  .wellwish{background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.25);border-radius:12px;
+    padding:13px 15px;margin-bottom:16px;font-size:12.5px;color:#B7F5DE;line-height:1.6;text-align:center;}
+  .id-step-warn{font-size:12.5px;color:#FFB4BC;background:rgba(255,77,94,0.1);border:1px solid rgba(255,77,94,0.3);
+    border-radius:10px;padding:11px 12px;line-height:1.55;margin-bottom:12px;font-weight:600;}
+  .id-step-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;color:var(--gold-soft);}
+  .id-step-txt{font-size:12.5px;color:var(--sub);line-height:1.6;margin-bottom:12px;}
+  .id-step-img{width:100%;border-radius:10px;border:1px solid var(--line);display:block;}
+
+  .altpay-block{background:var(--panel);border:1px solid rgba(255,176,32,0.3);border-radius:14px;padding:16px;
+    margin-bottom:16px;backdrop-filter:blur(14px);}
+  .altpay-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px;
+    display:flex;align-items:center;gap:7px;color:var(--gold-soft);}
+  .altpay-txt{font-size:12.5px;color:var(--sub);line-height:1.6;margin-bottom:12px;}
+  .altpay-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+  .altpay-row{display:flex;justify-content:space-between;align-items:center;background:var(--panel-2);
+    border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-size:13px;}
+  .altpay-row b{color:var(--gold-soft);font-weight:700;font-size:13px;text-align:right;}
+  .altpay-row b span{font-weight:500;color:var(--sub);font-size:11.5px;}
+  .altpay-note{font-size:12px;color:#B7F5DE;background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.25);
+    border-radius:10px;padding:10px 12px;line-height:1.55;}
+  .whatsapp-cta{display:flex;align-items:center;justify-content:center;width:100%;padding:14px;border-radius:12px;
+    background:var(--panel-2);border:1px solid var(--line);color:var(--text);font-size:14px;font-weight:600;text-decoration:none;}
+  .whatsapp-cta:active{transform:scale(0.98);}
+
+  .faq-wrap{margin-bottom:20px;}
+
+  .mm-link-card{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);
+    border-radius:var(--radius);padding:15px 16px;margin-bottom:20px;backdrop-filter:blur(14px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+  .mm-link-icon{width:40px;height:40px;border-radius:11px;background:rgba(255,176,32,0.12);border:1px solid rgba(255,176,32,0.3);
+    display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+  .mm-link-txt{flex:1;min-width:0;}
+  .mm-link-title{font-family:'Space Grotesk',sans-serif;font-size:13.5px;font-weight:700;margin-bottom:2px;}
+  .mm-link-sub{font-size:11px;color:var(--sub);line-height:1.4;}
+  .mm-link-btn{flex-shrink:0;padding:10px 16px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#C97A1F);
+    color:#1A0F00;font-weight:700;font-size:12.5px;text-decoration:none;white-space:nowrap;}
+
+  .autocheck{margin-top:16px;padding-top:16px;border-top:1px dashed var(--line);}
+  .autocheck-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;
+    display:flex;align-items:center;gap:7px;color:var(--gold-soft);}
+  .autocheck-sub{font-size:12px;color:var(--sub);line-height:1.55;margin-bottom:12px;}
+  .autocheck-row{display:flex;gap:8px;margin-bottom:10px;}
+  .autocheck-row input{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
+    padding:12px 13px;color:var(--text);font-size:14px;outline:none;}
+  .autocheck-row input:focus{border-color:var(--gold);}
+  .autocheck-row button{flex-shrink:0;padding:12px 18px;border-radius:10px;border:none;
+    background:linear-gradient(135deg,var(--gold),#C97A1F);color:#1A0F00;font-weight:700;font-size:13.5px;cursor:pointer;}
+  .autocheck-row button:disabled{opacity:0.5;}
+  .autocheck-result{font-size:12.5px;line-height:1.6;}
+  .autocheck-result .ok{background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.3);color:#B7F5DE;
+    border-radius:10px;padding:12px 13px;}
+  .autocheck-result .bad{background:rgba(255,77,94,0.1);border:1px solid rgba(255,77,94,0.3);color:#FFB4BC;
+    border-radius:10px;padding:12px 13px;}
+  .autocheck-result .row{display:flex;justify-content:space-between;padding:4px 0;}
+  .autocheck-result .row b{color:var(--text);}
+  .faq-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;margin:4px 0 12px;display:flex;align-items:center;gap:8px;}
+  .faq-item{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px 15px;margin-bottom:10px;
+    backdrop-filter:blur(14px);}
+  .faq-item summary{padding:12px 0;font-family:'Space Grotesk',sans-serif;font-size:13.5px;font-weight:600;
+    cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--text);}
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary::after{content:'+';font-size:20px;color:var(--gold-soft);flex-shrink:0;transition:transform .2s;}
+  .faq-item[open] summary::after{transform:rotate(45deg);}
+  .faq-body{font-size:12.5px;color:var(--sub);line-height:1.6;padding-bottom:14px;}
+</style>
+</head>
+<body>
+<div class="glow-orb g1"></div>
+<div class="glow-orb g2"></div>
+<div class="bg-candles"></div>
+
+<div class="wrap">
+  <div class="welcome-toast" id="welcomeToast">
+    <div class="welcome-toast-icon">👋</div>
+    <div class="welcome-toast-body">
+      <div class="welcome-toast-title" id="welcomeTitle">Habari!</div>
+      <div class="welcome-toast-sub" data-sw="Nafasi za VIP ni chache — jiunge sasa kabla hazijaisha." data-en="VIP spots are limited — join now before they run out.">Nafasi za VIP ni chache — jiunge sasa kabla hazijaisha.</div>
+    </div>
+    <button type="button" class="welcome-toast-close" id="welcomeClose">✕</button>
+  </div>
+
+  <div class="brand">
+    <div class="brand-mark">📈</div>
+    <div>
+      <div class="brand-name" data-sw="Usajili wa VIP" data-en="VIP Registration">Usajili wa VIP</div>
+      <div class="brand-sub">Trading Signals &amp; AI Engines</div>
+    </div>
+  </div>
+
+  <div class="weekend-banner" id="weekendBanner">
+    <div class="weekend-icon">🕐</div>
+    <div class="weekend-txt">
+      <b data-sw="Masoko makuu yamefungwa leo (Weekend)." data-en="Main markets are closed today (Weekend).">Masoko makuu yamefungwa leo (Weekend).</b> <span data-sw="Signals na trading vitakuwa kwenye OTC Markets pekee — bado zinapatikana kawaida." data-en="Signals and trading will be on OTC Markets only — still available as usual.">Signals na trading vitakuwa kwenye OTC Markets pekee — bado zinapatikana kawaida.</span>
+    </div>
+  </div>
+
+  <div class="rules-tape"><div class="rules-track" id="rulesTrack"></div></div>
+
+  <div class="install-wrap" id="installWrap">
+    <div class="install-icon">📲</div>
+    <div class="install-txt">
+      <strong data-sw="Sakinisha App" data-en="Install App">Sakinisha App</strong>
+      <span data-sw="Iongeze kwenye simu yako kama app" data-en="Add this to your phone like an app">Iongeze kwenye simu yako kama app</span>
+    </div>
+    <button type="button" class="install-btn" id="installBtn" data-sw="Pakua" data-en="Download">Pakua</button>
+  </div>
+  <div class="ios-tip" id="iosTip" data-sw="📲 Kusakinisha kwenye iPhone: bofya kitufe cha Share (⬆️) chini kwenye Safari, kisha chagua 'Add to Home Screen'." data-en="📲 To install on iPhone: tap the Share button (⬆️) at the bottom of Safari, then choose 'Add to Home Screen'.">
+    📲 Kusakinisha kwenye iPhone: bofya kitufe cha Share (⬆️) chini kwenye Safari, kisha chagua 'Add to Home Screen'.
+  </div>
+
+  <div class="theme-wrap">
+    <div class="theme-label" data-sw="Chagua Mandhari" data-en="Choose Theme">Chagua Mandhari</div>
+    <div class="theme-row">
+      <div class="theme-swatch active" data-theme="gold" style="background:linear-gradient(135deg,#FFB020,#00E5A0)" title="Gold Trading"></div>
+      <div class="theme-swatch" data-theme="ocean" style="background:linear-gradient(135deg,#39C0FF,#00E5A0)" title="Ocean"></div>
+      <div class="theme-swatch" data-theme="purple" style="background:linear-gradient(135deg,#B984FF,#00E5A0)" title="Purple"></div>
+      <div class="theme-swatch" data-theme="emerald" style="background:linear-gradient(135deg,#2FE6A0,#00C2FF)" title="Emerald"></div>
+      <div class="theme-swatch" data-theme="sunset" style="background:linear-gradient(135deg,#FF7A45,#FFC53D)" title="Sunset"></div>
+    </div>
+  </div>
+
+  <div class="lang-toggle">
+    <button type="button" class="lang-btn active" id="btnSw">🇹🇿 Kiswahili</button>
+    <button type="button" class="lang-btn" id="btnEn">🇬🇧 English</button>
+  </div>
+
+  <div class="explain-block">
+    <div class="explain-title">📊 <span data-sw="Forex ni nini?" data-en="What is Forex?">Forex ni nini?</span></div>
+    <div class="explain-body" data-sw="Forex (Foreign Exchange) ni soko la kubadilisha fedha za nchi mbalimbali duniani, mfano Dola ya Marekani, Euro, Pound n.k. Watu hufanya biashara kwa kutabiri kama thamani ya fedha fulani itapanda au itashuka. Ndio maana tunatumia signals — ni maelekezo yanayokusaidia kujua wakati mzuri wa kuingia au kutoka kwenye biashara." data-en="Forex (Foreign Exchange) is the global market for trading different countries' currencies, such as the US Dollar, Euro, Pound, etc. People trade by predicting whether a currency's value will rise or fall. That's why we use signals — guidance that helps you know the right time to enter or exit a trade.">
+      Forex (Foreign Exchange) ni soko la kubadilisha fedha za nchi mbalimbali duniani, mfano Dola ya Marekani, Euro, Pound n.k. Watu hufanya biashara kwa kutabiri kama thamani ya fedha fulani itapanda au itashuka. Ndio maana tunatumia signals — ni maelekezo yanayokusaidia kujua wakati mzuri wa kuingia au kutoka kwenye biashara.
+    </div>
+  </div>
+
+  <div class="services-wrap">
+    <div class="services-title">🎁 <span data-sw="Huduma Unazopata" data-en="Services You Get">Huduma Unazopata</span></div>
+
+    <div class="service-card">
+      <div class="service-head">
+        <div class="service-icon">📡</div>
+        <div class="service-name" data-sw="Kundi la Signal" data-en="Signal Group">Kundi la Signal</div>
+        <div class="service-badge" data-sw="BURE" data-en="FREE">BURE</div>
+      </div>
+      <div class="service-body" data-sw="Utaunganishwa kwenye group letu la signals bure. Signals hutumwa kila siku saa 5 kamili hadi saa 5 na nusu asubuhi, dakika 30 tu — hivyo unatakiwa kuwa active muda huo ili usikose. Wengine wanalipisha signals, lakini zetu ni bure kabisa." data-en="You'll be added to our free signals group. Signals are sent daily from exactly 5:00 to 5:30 AM, for just 30 minutes — so you need to be active during that window so you don't miss them. Others charge for signals, but ours are completely free.">
+        Utaunganishwa kwenye group letu la signals bure. Signals hutumwa kila siku saa 5 kamili hadi saa 5 na nusu asubuhi, dakika 30 tu — hivyo unatakiwa kuwa active muda huo ili usikose. Wengine wanalipisha signals, lakini zetu ni bure kabisa.
+      </div>
+    </div>
+
+    <div class="service-card">
+      <div class="service-head">
+        <div class="service-icon">🤖</div>
+        <div class="service-name" data-sw="Auto Trading Bot" data-en="Auto Trading Bot">Auto Trading Bot</div>
+        <div class="service-badge" data-sw="BURE - VIP 3+ MIEZI" data-en="FREE - VIP 3+ MONTHS">BURE - VIP 3+ MIEZI</div>
+      </div>
+      <div class="service-body" data-sw="Wanachama wa VIP walioshakaa nasi zaidi ya miezi 3 wanapewa bot ya automatic trading bure — inafanya kazi wakati wowote unapoiwasha, bila wewe kuhitaji kukaa kufuatilia soko." data-en="VIP members who have been with us for more than 3 months get a free automatic trading bot — it works anytime you switch it on, without you needing to sit and watch the market.">
+        Wanachama wa VIP walioshakaa nasi zaidi ya miezi 3 wanapewa bot ya automatic trading bure — inafanya kazi wakati wowote unapoiwasha, bila wewe kuhitaji kukaa kufuatilia soko.
+      </div>
+    </div>
+
+    <div class="service-card">
+      <div class="service-head">
+        <div class="service-icon">📋</div>
+        <div class="service-name" data-sw="Copy Trading" data-en="Copy Trading">Copy Trading</div>
+        <div class="service-badge" data-sw="BURE - VIP 3+ MIEZI" data-en="FREE - VIP 3+ MONTHS">BURE - VIP 3+ MIEZI</div>
+      </div>
+      <div class="service-body" data-sw="Unapata fursa ya kunikopi mimi bure kabisa — kila nikifanya biashara kwenye akaunti yangu, na kwako zinajiweka kiotomatiki, hakuna haja ya wewe kubonyeza. Hauhitaji kukaa online muda wote — ni rahisi na haina usumbufu, hasa kwa watu wenye shughuli nyingi. Inahitaji uwe umeshakaa kwenye kundi la VIP kwa angalau miezi 3." data-en="You get the chance to copy me completely free — whenever I trade on my account, it automatically mirrors onto your account, no need for you to tap anything. You don't need to stay online all the time — it's simple and hassle-free, especially for busy people. Requires being in the VIP group for at least 3 months.">
+        Unapata fursa ya kunikopi mimi bure kabisa — kila nikifanya biashara kwenye akaunti yangu, na kwako zinajiweka kiotomatiki, hakuna haja ya wewe kubonyeza. Hauhitaji kukaa online muda wote — ni rahisi na haina usumbufu, hasa kwa watu wenye shughuli nyingi. Inahitaji uwe umeshakaa kwenye kundi la VIP kwa angalau miezi 3.
+      </div>
+    </div>
+
+    <div class="service-card">
+      <div class="service-head">
+        <div class="service-icon">🛟</div>
+        <div class="service-name" data-sw="Msaada na Taarifa" data-en="Support & Updates">Msaada na Taarifa</div>
+        <div class="service-badge" data-sw="BURE KILA WAKATI" data-en="ALWAYS FREE">BURE KILA WAKATI</div>
+      </div>
+      <div class="service-body" data-sw="Huduma zote, taarifa mpya, na msaada ni bure kabisa. Una tatizo au swali lolote? Tuma WhatsApp wakati wowote." data-en="All services, updates, and support are completely free. Have any issue or question? Message us on WhatsApp anytime.">
+        Huduma zote, taarifa mpya, na msaada ni bure kabisa. Una tatizo au swali lolote? Tuma WhatsApp wakati wowote.
+      </div>
+    </div>
+  </div>
+
+  <div class="proof-wrap">
+    <div class="proof-title">🏆 <span data-sw="Ushahidi wa Uzoefu Wetu" data-en="Proof of Our Track Record">Ushahidi wa Uzoefu Wetu</span></div>
+    <div class="proof-sub" data-sw="Historia halisi ya trading yetu — Novemba 2024 hadi Juni 2026, profitable trader. (Balance na baadhi ya takwimu za fedha zimefichwa kwa faragha)." data-en="Our real trading history — November 2024 to June 2026, profitable trader. (Balance and some financial figures are hidden for privacy).">
+      Historia halisi ya trading yetu — Novemba 2024 hadi Juni 2026, profitable trader. (Balance na baadhi ya takwimu za fedha zimefichwa kwa faragha).
+    </div>
+    <img class="proof-img" src="trading-proof.jpg" alt="Trading proof — profitable trader 2024-2026">
+  </div>
+
+  <div class="proof-wrap">
+    <div class="proof-title">🔥 <span data-sw="VIP Wanaofuata Signal Zetu — Telegram" data-en="VIP Members Following Our Signals — Telegram">VIP Wanaofuata Signal Zetu — Telegram</span></div>
+    <div class="proof-sub" data-sw="Channel yetu ya Telegram ina wanachama 1,244+ wanaopokea signals na matokeo kila siku." data-en="Our Telegram channel has 1,244+ members receiving signals and results every day.">
+      Channel yetu ya Telegram ina wanachama 1,244+ wanaopokea signals na matokeo kila siku.
+    </div>
+    <img class="proof-img" src="telegram-proof.jpg" alt="VIP members following signals on our Telegram channel">
+    <div class="urgency-banner">
+      ⏳ <span data-sw="Nafasi ni chache — jiunge sasa usije ukapoteza fursa! Usifikirie sana, anza na kidogo ulichonacho leo — utakua taratibu taratibu." data-en="Spots are limited — join now before you miss the opportunity! Don't overthink it, start with the little you have today — you'll grow gradually.">Nafasi ni chache — jiunge sasa usije ukapoteza fursa! Usifikirie sana, anza na kidogo ulichonacho leo — utakua taratibu taratibu.</span>
+    </div>
+  </div>
+
+  <div class="follow-wrap">
+    <div class="follow-title">🚀 <span data-sw="Tufuate Popote" data-en="Follow Us Everywhere">Tufuate Popote</span></div>
+    <div class="follow-sub" data-sw="Nifuate/Ni-subscribe kwenye channel zangu ili nizidi kufanya vizuri na kukuletea maudhui zaidi ya trading." data-en="Follow / subscribe to my channels so I can keep improving and bring you more trading content.">
+      Nifuate/Ni-subscribe kwenye channel zangu ili nizidi kufanya vizuri na kukuletea maudhui zaidi ya trading.
+    </div>
+    <div class="follow-btns">
+      <a class="follow-btn tiktok" href="https://vt.tiktok.com/ZSVsheKM4/" target="_blank" rel="noopener">
+        <div class="follow-icon">🎵</div>
+        <div class="follow-text">
+          <span data-sw="Nifuate TikTok" data-en="Follow on TikTok">Nifuate TikTok</span>
+          <small data-sw="Bofya kufungua" data-en="Tap to open">Bofya kufungua</small>
+        </div>
+      </a>
+      <a class="follow-btn youtube" href="https://www.youtube.com/@Evalonwinnersofficial" target="_blank" rel="noopener">
+        <div class="follow-icon">▶️</div>
+        <div class="follow-text">
+          <span data-sw="Ni-subscribe YouTube" data-en="Subscribe on YouTube">Ni-subscribe YouTube</span>
+          <small data-sw="@Evalonwinnersofficial — Bofya kufungua" data-en="@Evalonwinnersofficial — Tap to open">@Evalonwinnersofficial — Bofya kufungua</small>
+        </div>
+      </a>
+      <a class="follow-btn whatsappgroup" href="https://chat.whatsapp.com/FvabZrMzjFtAl1YZb0bJU4" target="_blank" rel="noopener">
+        <div class="follow-icon">💬</div>
+        <div class="follow-text">
+          <span data-sw="Jiunge WhatsApp Community" data-en="Join WhatsApp Community">Jiunge WhatsApp Community</span>
+          <small data-sw="Matangazo na updates — Bofya kufungua" data-en="Announcements & updates — Tap to open">Matangazo na updates — Bofya kufungua</small>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="intro-note" data-sw="Soma maelezo yote ya juu vizuri, kisha bofya kitufe cha kujisajili hapa chini." data-en="Read all the information above carefully, then tap the registration button below.">
+    Soma maelezo yote ya juu vizuri, kisha bofya kitufe cha kujisajili hapa chini.
+  </div>
+
+  <div class="risk-note" data-sw="⚠️ ONYO: Trading inaweza kuleta faida kubwa ikakupa utajiri kwa haraka sana, lakini pia ina hatari ya hasara. Hatuhidi 100% — kila siku lazima utambue kuwa kuna kupata na kukosa. Ushauri: wekeza kiasi unachokimudu, na uweke trade asilimia 1 au 2 tu ya mtaji wako." data-en="⚠️ WARNING: Trading can bring big profits and make you wealthy very fast, but it also carries risk of loss. We do not guarantee 100% — every day you must recognize there is winning and losing. Advice: invest only what you can afford, and risk just 1-2% of your capital per trade.">
+    ⚠️ ONYO: Trading inaweza kuleta faida kubwa ikakupa utajiri kwa haraka sana, lakini pia ina hatari ya hasara. Hatuhidi 100% — kila siku lazima utambue kuwa kuna kupata na kukosa. Ushauri: wekeza kiasi unachokimudu, na uweke trade asilimia 1 au 2 tu ya mtaji wako.
+  </div>
+
+  <div class="cta-wrap">
+    <div class="cta-title">💰 <span data-sw="Viwango vya Mtaji" data-en="Capital Levels">Viwango vya Mtaji</span></div>
+    <div class="cta-tier">
+      <div class="cta-tier-badge">$50+</div>
+      <div class="cta-tier-txt" data-sw="Wenye mtaji kuanzia $50 wanapata PROMO CODE maalum na BONUS ya 60% ya ziada kwenye akaunti wakati wa kujisajili — tumia code hapa chini." data-en="Those with capital starting from $50 get a special PROMO CODE plus a 60% extra bonus on their account at registration — use the code below.">Wenye mtaji kuanzia $50 wanapata PROMO CODE maalum na BONUS ya 60% ya ziada kwenye akaunti wakati wa kujisajili — tumia code hapa chini.</div>
+    </div>
+    <div class="cta-tier">
+      <div class="cta-tier-badge alt">$10+</div>
+      <div class="cta-tier-txt" data-sw="Kiwango cha chini kabisa cha kuanza kupokea signals zetu ni $10." data-en="The minimum amount to start receiving our signals is $10.">Kiwango cha chini kabisa cha kuanza kupokea signals zetu ni $10.</div>
+    </div>
+
+    <div class="bonus-example">
+      <div class="bonus-example-title">🎁 <span data-sw="Mfano wa Bonus 60%" data-en="60% Bonus Example">Mfano wa Bonus 60%</span></div>
+      <div class="bonus-calc">
+        <div class="bonus-row"><span data-sw="Ukiweka" data-en="You deposit">Ukiweka</span><b>$50</b></div>
+        <div class="bonus-row plus"><span data-sw="Bonus (60%)" data-en="Bonus (60%)">Bonus (60%)</span><b>+ $30</b></div>
+        <div class="bonus-row total"><span data-sw="Utakuwa na jumla ya" data-en="Total in your account">Utakuwa na jumla ya</span><b>$80</b></div>
+      </div>
+    </div>
+
+    <div class="promo-box">
+      <div class="promo-label" data-sw="PROMO CODE" data-en="PROMO CODE">PROMO CODE</div>
+      <div class="promo-code" id="promoCode">XCA982</div>
+      <button type="button" class="promo-copy" id="promoCopyBtn" data-sw="Nakili" data-en="Copy">Nakili</button>
+    </div>
+
+    <a class="register-btn" href="https://u3.shortink.io/register?utm_campaign=858680&utm_source=affiliate&utm_medium=cpa&utm_term=15&a=EAd8SgqydkjrtA&al=1792987&ac=evaloncompoundingbot&cid=977901&oid=15&code=XCA982" target="_blank" rel="noopener">
+      <span data-sw="🚀 Jisajili Sasa" data-en="🚀 Register Now">🚀 Jisajili Sasa</span>
+    </a>
+
+    <div class="guide-block">
+      <div class="guide-title">📝 <span data-sw="Jina la Kujiandikisha" data-en="Registration Name">Jina la Kujiandikisha</span></div>
+      <div class="guide-txt" data-sw="Andika majina yako kamili kama yalivyo kwenye kitambulisho chako halali (NIDA, kitambulisho cha kupiga kura, au leseni ya udereva). Kama huna kitambulisho chochote, unaweza kutumia cha ndugu, jamaa, rafiki, mzazi au mlezi unayemwamini — lakini hakikisha kama utatumia kitambulisho cha mtu mwingine, majina uliyoandika yawe ni ya mmiliki halisi wa kitambulisho hicho, si yako." data-en="Write your full names exactly as they appear on a valid ID (National ID, voter's card, or driver's license). If you don't have any ID, you can use a trusted relative's, family member's, friend's, parent's, or guardian's ID — but if you use someone else's ID, make sure the names you enter are that ID owner's real names, not your own.">
+        Andika majina yako kamili kama yalivyo kwenye kitambulisho chako halali (NIDA, kitambulisho cha kupiga kura, au leseni ya udereva). Kama huna kitambulisho chochote, unaweza kutumia cha ndugu, jamaa, rafiki, mzazi au mlezi unayemwamini — lakini hakikisha kama utatumia kitambulisho cha mtu mwingine, majina uliyoandika yawe ni ya mmiliki halisi wa kitambulisho hicho, si yako.
+      </div>
+    </div>
+
+    <div class="guide-block">
+      <div class="guide-title">💳 <span data-sw="Kuweka Pesa (Deposit)" data-en="Depositing Money">Kuweka Pesa (Deposit)</span></div>
+      <div class="guide-txt" data-sw="Wakati wa kuweka pesa, majina hayahitajiki kufanana na kitambulisho. Muhimu zaidi: kama unatumia mtandao wa simu (mobile money) kuweka pesa, ni lazima namba hiyo hiyo ndiyo itumike kutoa pesa (withdraw) — namba tofauti haiwezi kutoa fedha zilizowekwa na namba nyingine. Kama unatumia njia nyingine kama crypto au mitandao mingine, sheria hii ya namba kufanana haihusiki." data-en="When depositing, the name doesn't need to match your ID. What matters most: if you use mobile money to deposit, the same number must be used to withdraw — a different number cannot withdraw funds deposited from another number. If you use another method like crypto or other networks, this same-number rule doesn't apply.">
+        Wakati wa kuweka pesa, majina hayahitajiki kufanana na kitambulisho. Muhimu zaidi: kama unatumia mtandao wa simu (mobile money) kuweka pesa, ni lazima namba hiyo hiyo ndiyo itumike kutoa pesa (withdraw) — namba tofauti haiwezi kutoa fedha zilizowekwa na namba nyingine. Kama unatumia njia nyingine kama crypto au mitandao mingine, sheria hii ya namba kufanana haihusiki.
+      </div>
+    </div>
+
+    <div class="wellwish">
+      🤝 <span data-sw="Tunakutakia mafanikio mema katika safari yako ya trading — kuwa na nidhamu, fuata signals kwa umakini, na mafanikio yatakuja." data-en="We wish you great success on your trading journey — stay disciplined, follow the signals carefully, and success will come.">Tunakutakia mafanikio mema katika safari yako ya trading — kuwa na nidhamu, fuata signals kwa umakini, na mafanikio yatakuja.</span>
+    </div>
+
+    <div class="id-step">
+      <div class="id-step-warn" data-sw="🚫 MUHIMU: Kabla ya kuweka mtaji (deposit), lazima kwanza utume ID yako ili tuthibitishe umejisajili kupitia link yetu. Bila hii, HUTOPATA msaada, signals, auto bot wala huduma yoyote. Kama unadownload app au tayari unayo, kwanza ingia kwenye browser kwa kutumia link tuliyokutumia kisha ujisajili, kisha rudi kwenye app yako na uweke Gmail na password yako ile ile. Kama ulishajisajili kupitia link za wa-trader/mentor wengine, toa pesa yako, futa akaunti hiyo, kisha sajili akaunti mpya kupitia link yetu ndipo tutakupa huduma." data-en="🚫 IMPORTANT: Before you deposit any capital, you must first send your ID so we can confirm you registered through our link. Without this, you will NOT receive support, signals, auto bot, or any service. If you're downloading the app or already have it, first open your browser using the link we sent you and register there, then go back into your app and log in with the same Gmail and password. If you already registered through another trader/mentor's link, withdraw your money, delete that account, then register a new account through our link — only then can we provide you with our services.">
+        🚫 MUHIMU: Kabla ya kuweka mtaji (deposit), lazima kwanza utume ID yako ili tuthibitishe umejisajili kupitia link yetu. Bila hii, HUTOPATA msaada, signals, auto bot wala huduma yoyote. Kama unadownload app au tayari unayo, kwanza ingia kwenye browser kwa kutumia link tuliyokutumia kisha ujisajili, kisha rudi kwenye app yako na uweke Gmail na password yako ile ile. Kama ulishajisajili kupitia link za wa-trader/mentor wengine, toa pesa yako, futa akaunti hiyo, kisha sajili akaunti mpya kupitia link yetu ndipo tutakupa huduma.
+      </div>
+      <div class="id-step-title" data-sw="Wapi Kupata ID Yako" data-en="Where to Find Your ID">Wapi Kupata ID Yako</div>
+      <div class="id-step-txt" data-sw="Fungua akaunti uliyosajili, nenda kwenye Profile — ID yako ipo pale juu (mfano kwenye picha) kama namba tu, si barua pepe. Iandike au i-screenshot kisha itume kwenye WhatsApp yetu." data-en="Open the account you registered, go to Profile — your ID is right there at the top (as shown in the picture) as just a number, not the email. Write it down or screenshot it and send it to our WhatsApp.">
+        Fungua akaunti uliyosajili, nenda kwenye Profile — ID yako ipo pale juu (mfano kwenye picha) kama namba tu, si barua pepe. Iandike au i-screenshot kisha itume kwenye WhatsApp yetu.
+      </div>
+      <img class="id-step-img" src="id-verify.png" alt="Mahali pa ID kwenye Profile">
+    </div>
+
+    <div class="altpay-block">
+      <div class="altpay-title">💵 <span data-sw="Huwezi Kujisajili Kupitia Link Yetu?" data-en="Can't Register Through Our Link?">Huwezi Kujisajili Kupitia Link Yetu?</span></div>
+      <div class="altpay-txt" data-sw="Kama huwezi kujisajili au kufungua akaunti mpya kupitia link yetu (una akaunti ya zamani na hutaki kuibadili), unaweza kulipia huduma zetu moja kwa moja:" data-en="If you can't register or open a new account through our link (you have an old account and don't want to change it), you can pay for our services directly:">
+        Kama huwezi kujisajili au kufungua akaunti mpya kupitia link yetu (una akaunti ya zamani na hutaki kuibadili), unaweza kulipia huduma zetu moja kwa moja:
+      </div>
+      <div class="altpay-list">
+        <div class="altpay-row"><span data-sw="Kundi la VIP" data-en="VIP Group">Kundi la VIP</span><b>$50<span data-sw="/mwezi" data-en="/month">/mwezi</span> — $250 <span data-sw="lifetime" data-en="lifetime">lifetime</span></b></div>
+        <div class="altpay-row"><span data-sw="Auto Trading Bot" data-en="Auto Trading Bot">Auto Trading Bot</span><b>$300 <span data-sw="lifetime" data-en="lifetime">lifetime</span></b></div>
+        <div class="altpay-row"><span data-sw="Copy Trading" data-en="Copy Trading">Copy Trading</span><b>$500 <span data-sw="lifetime" data-en="lifetime">lifetime</span></b></div>
+      </div>
+      <div class="altpay-note" data-sw="✅ Mwenye kujisajili kupitia link yetu anapata huduma HIZI ZOTE bure kabisa — malipo haya ni kwa wale wasioweza kutumia link yetu tu." data-en="✅ Anyone who registers through our link gets ALL of these services completely free — this pricing is only for those who cannot use our link.">
+        ✅ Mwenye kujisajili kupitia link yetu anapata huduma HIZI ZOTE bure kabisa — malipo haya ni kwa wale wasioweza kutumia link yetu tu.
+      </div>
+    </div>
+
+    <div class="cta-footnote" data-sw="Baada ya kutuma ID na kuthibitishwa, ndipo uweke mtaji (deposit) na tuma screenshot ya deposit WhatsApp ili tukuunganishe kwenye kundi la VIP na signals." data-en="Once your ID is sent and confirmed, go ahead and deposit, then send a screenshot of the deposit on WhatsApp so we can add you to the VIP group and signals.">
+      Baada ya kutuma ID na kuthibitishwa, ndipo uweke mtaji (deposit) na tuma screenshot ya deposit WhatsApp ili tukuunganishe kwenye kundi la VIP na signals.
+    </div>
+    <a class="whatsapp-cta" href="https://wa.me/255745621218" target="_blank" rel="noopener">
+      <span data-sw="💬 Tuma ID Yako WhatsApp" data-en="💬 Send Your ID on WhatsApp">💬 Tuma ID Yako WhatsApp</span>
+    </a>
+
+    <div class="autocheck">
+      <div class="autocheck-title">⚡ <span data-sw="Au Jiangalie Mwenyewe — Papo Hapo" data-en="Or Check Yourself — Instantly">Au Jiangalie Mwenyewe — Papo Hapo</span></div>
+      <div class="autocheck-sub" data-sw="Usisubiri majibu — weka ID/UID yako hapa chini uone papo hapo kama umesajiliwa kwetu, hata kama tunachelewa kujibu WhatsApp." data-en="No need to wait — enter your ID/UID below to instantly see if you're registered with us, even if we're slow to reply on WhatsApp.">
+        Usisubiri majibu — weka ID/UID yako hapa chini uone papo hapo kama umesajiliwa kwetu, hata kama tunachelewa kujibu WhatsApp.
+      </div>
+      <div class="autocheck-row">
+        <input type="text" id="checkIdInput" inputmode="numeric" data-ph-sw="Weka ID/UID yako..." data-ph-en="Enter your ID/UID..." placeholder="Weka ID/UID yako...">
+        <button type="button" id="checkIdBtn" data-sw="Angalia" data-en="Check">Angalia</button>
+      </div>
+      <div class="autocheck-result" id="checkIdResult"></div>
+    </div>
+  </div>
+
+  <div class="mm-link-card">
+    <div class="mm-link-icon">📊</div>
+    <div class="mm-link-txt">
+      <div class="mm-link-title" data-sw="Money Management & Kanuni Zangu" data-en="Money Management & My Rules">Money Management & Kanuni Zangu</div>
+      <div class="mm-link-sub" data-sw="Jinsi signal zinavyofanya kazi, na onyo dhidi ya ma-manager wa kutapeli" data-en="How signals work, and a warning against scam managers">Jinsi signal zinavyofanya kazi, na onyo dhidi ya ma-manager wa kutapeli</div>
+    </div>
+    <a class="mm-link-btn" href="money-management.html" data-sw="Soma" data-en="Read">Soma</a>
+  </div>
+
+  <div class="faq-wrap">
+    <div class="faq-title">❓ <span data-sw="Maswali Yanayoulizwa Mara kwa Mara" data-en="Frequently Asked Questions">Maswali Yanayoulizwa Mara kwa Mara</span></div>
+
+    <details class="faq-item">
+      <summary data-sw="Kwa nini lazima nijisajili kupitia link yenu?" data-en="Why must I register through your link?">Kwa nini lazima nijisajili kupitia link yenu?</summary>
+      <div class="faq-body" data-sw="Hatuuzi signal — unapata signal zenye ubora zaidi kwetu bila malipo. Sababu tunayolazimisha kujiunga kupitia link yetu ni kwamba kampuni inatulipa commission kadri unavyoendelea kupata faida — ukipata faida wewe, sisi tunalipwa asilimia na kampuni. Ndio maana tunasisitiza ujisajili kwa link yetu." data-en="We don't sell signals — you get our high-quality signals completely free. The reason we require you to join through our link is that the company pays us a commission as you continue making profit — when you profit, we get paid a percentage by the company. That's why we insist on registering through our link.">
+        Hatuuzi signal — unapata signal zenye ubora zaidi kwetu bila malipo. Sababu tunayolazimisha kujiunga kupitia link yetu ni kwamba kampuni inatulipa commission kadri unavyoendelea kupata faida — ukipata faida wewe, sisi tunalipwa asilimia na kampuni. Ndio maana tunasisitiza ujisajili kwa link yetu.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-sw="Nisipojiunga kwa link yenu je, nitapata huduma?" data-en="If I don't join through your link, will I get the service?">Nisipojiunga kwa link yenu je, nitapata huduma?</summary>
+      <div class="faq-body" data-sw="Hapana. Huwezi kupata huduma yoyote ikiwemo kundi la VIP, signals, auto trading bot, wala copy trading kama hukujisajili kupitia link yetu — kwa sababu ndipo tunapothibitika kupokea commission na kukuhudumia." data-en="No. You cannot receive any service including the VIP group, signals, auto trading bot, or copy trading if you did not register through our link — that's how we're able to verify you and be paid to support you.">
+        Hapana. Huwezi kupata huduma yoyote ikiwemo kundi la VIP, signals, auto trading bot, wala copy trading kama hukujisajili kupitia link yetu — kwa sababu ndipo tunapothibitika kupokea commission na kukuhudumia.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-sw="Nikimwalika rafiki yangu je?" data-en="What if I invite my friend?">Nikimwalika rafiki yangu je?</summary>
+      <div class="faq-body" data-sw="Ndiyo, unaruhusiwa kabisa! Ukileta rafiki na akajisajili kupitia link yetu (uliyompa wewe), tutakulipa $1 kwa kila rafiki utakayemwalika na kujisajili." data-en="Yes, absolutely allowed! If you bring a friend and they register through our link (that you shared), we'll pay you $1 for every friend you invite who signs up.">
+        Ndiyo, unaruhusiwa kabisa! Ukileta rafiki na akajisajili kupitia link yetu (uliyompa wewe), tutakulipa $1 kwa kila rafiki utakayemwalika na kujisajili.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-sw="Je, mnaweza kunisaidia mtaji?" data-en="Can you help me with capital?">Je, mnaweza kunisaidia mtaji?</summary>
+      <div class="faq-body" data-sw="Wengi wanauliza swali hili, na jibu ni: ukionyesha juhudi kwa kufuata signal zetu kwa usahihi, tunaweza kukupa mtaji bure. Lazima uonekane ukifuata signals zetu kila siku kwa angalau wiki moja, ukituma feedback na screenshot za biashara zako — ukionyesha una nia ya kweli, tunaweza kukusaidia mtaji." data-en="Many people ask this, and the answer is: if you show effort by following our signals accurately, we can give you free capital. You must be seen following our signals daily for at least one week, sending us feedback and screenshots of your trades — if you show genuine commitment, we can help you with capital.">
+        Wengi wanauliza swali hili, na jibu ni: ukionyesha juhudi kwa kufuata signal zetu kwa usahihi, tunaweza kukupa mtaji bure. Lazima uonekane ukifuata signals zetu kila siku kwa angalau wiki moja, ukituma feedback na screenshot za biashara zako — ukionyesha una nia ya kweli, tunaweza kukusaidia mtaji.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-sw="Kiwango cha chini cha kuanza ni kiasi gani?" data-en="What is the minimum amount to start?">Kiwango cha chini cha kuanza ni kiasi gani?</summary>
+      <div class="faq-body" data-sw="Kiwango cha chini kabisa cha kuanza kupokea signals zetu ni $10. Lakini tunapendekeza uanze na angalau $50 ili ufaidike na promo code na bonus ya 60%." data-en="The absolute minimum to start receiving our signals is $10. But we recommend starting with at least $50 so you can benefit from the promo code and the 60% bonus.">
+        Kiwango cha chini kabisa cha kuanza kupokea signals zetu ni $10. Lakini tunapendekeza uanze na angalau $50 ili ufaidike na promo code na bonus ya 60%.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-sw="Nahitaji uzoefu wa awali kuanza?" data-en="Do I need prior experience to start?">Nahitaji uzoefu wa awali kuanza?</summary>
+      <div class="faq-body" data-sw="Hapana kabisa. Hata kama ni mpya kabisa unaweza kuanza — ndio maana tunatoa signals, mafunzo, na auto trading bot ili kukusaidia hata kama huna uzoefu wowote wa trading." data-en="Not at all. Even if you're a complete beginner you can start — that's why we provide signals, guidance, and an auto trading bot to support you even with zero trading experience.">
+        Hapana kabisa. Hata kama ni mpya kabisa unaweza kuanza — ndio maana tunatoa signals, mafunzo, na auto trading bot ili kukusaidia hata kama huna uzoefu wowote wa trading.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-sw="Naweza ku-withdraw fedha zangu lini na vipi?" data-en="When and how can I withdraw my money?">Naweza ku-withdraw fedha zangu lini na vipi?</summary>
+      <div class="faq-body" data-sw="Uwezo wa kutoa (withdraw) fedha unategemea sera za broker (Pocket Option) mwenyewe — kwa kawaida ni haraka. Sisi tunakusaidia tu kwa signals na mwongozo; fedha zako zipo kwenye akaunti yako mwenyewe muda wote." data-en="Withdrawal ability depends on the broker's (Pocket Option) own policies — typically fast. We only help you with signals and guidance; your money stays in your own account at all times.">
+        Uwezo wa kutoa (withdraw) fedha unategemea sera za broker (Pocket Option) mwenyewe — kwa kawaida ni haraka. Sisi tunakusaidia tu kwa signals na mwongozo; fedha zako zipo kwenye akaunti yako mwenyewe muda wote.
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary data-sw="Nikipoteza fedha zangu zote nifanyeje?" data-en="What do I do if I lose all my money?">Nikipoteza fedha zangu zote nifanyeje?</summary>
+      <div class="faq-body" data-sw="Trading ina hatari kama tulivyokwisha kukuonya. Tunashauri uwekeze kiasi unachomudu tu, na uweke trade asilimia 1-2 tu ya mtaji kwa kila biashara. Ukipoteza, wasiliana nasi WhatsApp tutakushauri jinsi ya kuendelea kwa busara." data-en="Trading carries risk as we already warned. We advise investing only what you can afford, and risking just 1-2% of your capital per trade. If you lose, contact us on WhatsApp and we'll advise you on how to proceed wisely.">
+        Trading ina hatari kama tulivyokwisha kukuonya. Tunashauri uwekeze kiasi unachomudu tu, na uweke trade asilimia 1-2 tu ya mtaji kwa kila biashara. Ukipoteza, wasiliana nasi WhatsApp tutakushauri jinsi ya kuendelea kwa busara.
+      </div>
+    </details>
+  </div>
+
+  <div class="footer-note" data-sw="© Huduma zote na taarifa ni bure — una swali? Tuma WhatsApp." data-en="© All services and updates are free — have a question? Message us on WhatsApp.">© Huduma zote na taarifa ni bure — una swali? Tuma WhatsApp.</div>
+  <div class="footer-note" id="copyrightNote" style="margin-top:6px;">© Evalon Winners VIP Signal 2024 - 2026</div>
+</div>
+
+<script>
+const WHATSAPP_NUMBER = '255745621218';
+let LANG = 'sw';
+
+document.getElementById('promoCopyBtn').addEventListener('click', ()=>{
+  const code = document.getElementById('promoCode').textContent;
+  const btn = document.getElementById('promoCopyBtn');
+  navigator.clipboard.writeText(code).then(()=>{
+    const original = {sw: btn.dataset.sw, en: btn.dataset.en};
+    btn.textContent = LANG==='sw' ? 'Imenakiliwa ✓' : 'Copied ✓';
+    setTimeout(()=>{ btn.textContent = LANG==='sw' ? original.sw : original.en; }, 1800);
+  }).catch(()=>{});
+});
+
+/* Weekend detection (for OTC banner) */
+const day = new Date().getDay(); // 0=Sun, 6=Sat
+const isWeekend = (day === 0 || day === 6);
+if(isWeekend){
+  document.getElementById('weekendBanner').classList.add('show');
+}
+
+(function buildRulesTape(){
+  const track = document.getElementById('rulesTrack');
+  const msgSw = '📜 SOMA MASHARTI NA SERA ZOTE KWA USAHIHI KABLA YA KUJIUNGA NA VIP SIGNALS ZETU';
+  const msgEn = '📜 READ ALL TERMS AND POLICIES CAREFULLY BEFORE JOINING OUR VIP SIGNALS';
+  const text = LANG==='sw' ? msgSw : msgEn;
+  track.innerHTML = `<span>${text}</span><span>${text}</span><span>${text}</span><span>${text}</span>`;
+})();
+
+/* Welcome toast — time-based greeting + urgency */
+(function welcomeToast(){
+  const hour = new Date().getHours();
+  let greetSw, greetEn;
+  if(hour < 5){ greetSw='Habari za usiku! 🌙'; greetEn='Good night! 🌙'; }
+  else if(hour < 12){ greetSw='Habari za asubuhi! ☀️'; greetEn='Good morning! ☀️'; }
+  else if(hour < 17){ greetSw='Habari za mchana! 👋'; greetEn='Good afternoon! 👋'; }
+  else { greetSw='Habari za jioni! 🌆'; greetEn='Good evening! 🌆'; }
+
+  const titleEl = document.getElementById('welcomeTitle');
+  titleEl.dataset.sw = greetSw;
+  titleEl.dataset.en = greetEn;
+  titleEl.textContent = LANG==='sw' ? greetSw : greetEn;
+
+  const toast = document.getElementById('welcomeToast');
+  const alreadyShown = sessionStorage.getItem('vip_welcome_shown');
+  if(!alreadyShown){
+    setTimeout(()=>{ toast.classList.add('show'); }, 900);
+    setTimeout(()=>{ toast.classList.remove('show'); }, 9000);
+    sessionStorage.setItem('vip_welcome_shown','1');
+  }
+  document.getElementById('welcomeClose').addEventListener('click', ()=>{
+    toast.classList.remove('show');
+  });
+})();
+
+/* ID self-check — calls our Netlify function so the API token never reaches the browser */
+(function idAutoCheck(){
+  const btn = document.getElementById('checkIdBtn');
+  const input = document.getElementById('checkIdInput');
+  const resultEl = document.getElementById('checkIdResult');
+  if(!btn) return;
+
+  const LABELS = {
+    uid: {sw:'UID', en:'UID'},
+    reg_date: {sw:'Tarehe ya Usajili', en:'Registration Date'},
+    country: {sw:'Nchi', en:'Country'},
+    verified: {sw:'Verified', en:'Verified'},
+    status: {sw:'Hali ya Akaunti', en:'Account Status'}
+  };
+  const DISPLAY_ORDER = ['uid','reg_date','country','verified','status'];
+
+  function norm(s){ return String(s).toLowerCase().replace(/[\s_]/g,''); }
+
+  function getField(data, ...aliases){
+    const keys = Object.keys(data);
+    for(const alias of aliases){
+      const found = keys.find(k => norm(k) === norm(alias));
+      if(found !== undefined) return data[found];
+    }
+    return undefined;
+  }
+
+  function isVerifiedTrue(v){
+    if(v === true) return true;
+    if(typeof v === 'string') return ['yes','true','1','ndiyo'].includes(v.toLowerCase());
+    return false;
+  }
+
+  btn.addEventListener('click', async ()=>{
+    const id = input.value.trim();
+    if(!id){ input.focus(); return; }
+    btn.disabled = true;
+    const origText = btn.textContent;
+    btn.textContent = LANG==='sw' ? 'Inaangalia...' : 'Checking...';
+    resultEl.innerHTML = '';
+
+    try{
+      const res = await fetch(`/.netlify/functions/check-id?user_id=${encodeURIComponent(id)}`);
+      const json = await res.json();
+
+      if(json.ok && json.registered && json.data){
+        const d = json.data;
+        const normalized = {
+          uid: getField(d,'uid','UID','user_id'),
+          reg_date: getField(d,'reg_date','RegDate','registration_date'),
+          country: getField(d,'country','Country'),
+          verified: getField(d,'verified','Verified'),
+          status: getField(d,'status','Status'),
+          has_deposited: getField(d,'has_deposited')
+        };
+
+        let rows = '';
+        DISPLAY_ORDER.forEach(key=>{
+          const val = normalized[key];
+          if(val === undefined || val === null || val === '') return;
+          const lbl = LABELS[key] ? LABELS[key][LANG] : key;
+          rows += `<div class="row"><span>${lbl}</span><b>${val}</b></div>`;
+        });
+
+        const verified = isVerifiedTrue(normalized.verified);
+        const hasDeposited = normalized.has_deposited === true;
+        let noticeHtml = '';
+        if(!verified){
+          noticeHtml = `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,77,94,0.25);">
+            ⚠️ ${LANG==='sw'
+              ? 'Samahani, akaunti yako haijathibitishwa (verify) bado. Tafadhali verify akaunti yako kwanza, kisha uweke mtaji wako.'
+              : 'Sorry, your account is not verified yet. Please verify your account first, then deposit your capital.'}
+          </div>`;
+        } else if(!hasDeposited){
+          noticeHtml = `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,176,32,0.3);">
+            💰 ${LANG==='sw'
+              ? 'Verified ✅ lakini bado hujaweka mtaji (deposit). Tafadhali weka mtaji wako kisha tuma ID yako WhatsApp ili tukuunge kwenye kundi la VIP.'
+              : 'Verified ✅ but you have not deposited yet. Please deposit your capital then send your ID on WhatsApp so we can add you to the VIP group.'}
+          </div>`;
+        } else {
+          noticeHtml = `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,229,160,0.25);">
+            ✅ ${LANG==='sw'
+              ? 'Verified na umeshaweka mtaji! Tuma ID yako WhatsApp ili tukuunge kwenye kundi la VIP haraka.'
+              : 'Verified and you have already deposited! Send your ID on WhatsApp so we can add you to the VIP group right away.'}
+          </div>`;
+        }
+
+        resultEl.innerHTML = `<div class="ok">
+          ✅ ${LANG==='sw' ? 'Umesajiliwa kupitia link yetu!' : 'You are registered through our link!'}
+          ${rows}
+          ${noticeHtml}
+        </div>`;
+      } else {
+        resultEl.innerHTML = `<div class="bad">
+          ❌ ${LANG==='sw'
+            ? 'ID hii haijasajiliwa kupitia link yetu. Tumia link ya "Jisajili Sasa" hapo juu, au wasiliana WhatsApp kama unadhani hii ni kosa.'
+            : 'This ID is not registered through our link. Use the "Register Now" link above, or contact WhatsApp if you think this is a mistake.'}
+        </div>`;
+      }
+    } catch(e){
+      resultEl.innerHTML = `<div class="bad">⚠️ ${LANG==='sw' ? 'Imeshindikana kuangalia kwa sasa — jaribu tena baadaye au tuma WhatsApp.' : 'Could not check right now — try again later or message WhatsApp.'}</div>`;
+    }
+    btn.disabled = false;
+    btn.textContent = origText;
+  });
+})();
+
+/* Copyright year (auto-updates) */
+(function copyrightYear(){
+  const cy = document.getElementById('copyrightNote');
+  if(cy) cy.textContent = `© Evalon Winners VIP Signal 2024 - ${new Date().getFullYear()}`;
+})();
+
+
+/* Language toggle */
+function setLang(lang){
+  LANG = lang;
+  document.querySelectorAll('[data-sw]').forEach(el=>{
+    const val = el.dataset[lang];
+    if(val !== undefined) el.textContent = val;
+  });
+  document.querySelectorAll('[data-ph-sw]').forEach(el=>{
+    const key = lang==='sw' ? 'phSw' : 'phEn';
+    if(el.dataset[key] !== undefined) el.placeholder = el.dataset[key];
+  });
+  document.getElementById('btnSw').classList.toggle('active', lang==='sw');
+  document.getElementById('btnEn').classList.toggle('active', lang==='en');
+
+  const rulesTrack = document.getElementById('rulesTrack');
+  if(rulesTrack){
+    const msgSw = '📜 SOMA MASHARTI NA SERA ZOTE KWA USAHIHI KABLA YA KUJIUNGA NA VIP SIGNALS ZETU';
+    const msgEn = '📜 READ ALL TERMS AND POLICIES CAREFULLY BEFORE JOINING OUR VIP SIGNALS';
+    const text = lang==='sw' ? msgSw : msgEn;
+    rulesTrack.innerHTML = `<span>${text}</span><span>${text}</span><span>${text}</span><span>${text}</span>`;
+  }
+}
+document.getElementById('btnSw').addEventListener('click', ()=>setLang('sw'));
+document.getElementById('btnEn').addEventListener('click', ()=>setLang('en'));
+
+/* Theme picker */
+document.querySelectorAll('.theme-swatch').forEach(sw=>{
+  sw.addEventListener('click', ()=>{
+    const theme = sw.dataset.theme;
+    document.body.dataset.theme = theme;
+    document.querySelectorAll('.theme-swatch').forEach(s=>s.classList.remove('active'));
+    sw.classList.add('active');
+    try{ localStorage.setItem('vip_theme', theme); }catch(e){}
+  });
+});
+try{
+  const savedTheme = localStorage.getItem('vip_theme');
+  if(savedTheme){
+    document.body.dataset.theme = savedTheme;
+    document.querySelectorAll('.theme-swatch').forEach(s=>{
+      s.classList.toggle('active', s.dataset.theme===savedTheme);
+    });
+  }
+}catch(e){}
+
+/* PWA install */
+let deferredPrompt = null;
+const installWrap = document.getElementById('installWrap');
+const iosTip = document.getElementById('iosTip');
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+
+if(!isStandalone){
+  window.addEventListener('beforeinstallprompt', (e)=>{
+    e.preventDefault();
+    deferredPrompt = e;
+    installWrap.classList.add('show');
+  });
+  if(isIOS){
+    iosTip.classList.add('show');
+  }
+}
+document.getElementById('installBtn').addEventListener('click', async ()=>{
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  installWrap.classList.remove('show');
+});
+window.addEventListener('appinstalled', ()=>{
+  installWrap.classList.remove('show');
+  iosTip.classList.remove('show');
+});
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+
+setLang('sw');
+</script>
+</body>
+</html>
