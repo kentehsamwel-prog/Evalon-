@@ -38,7 +38,7 @@
     margin-bottom:18px;backdrop-filter:blur(14px);}
   .card-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;
     display:flex;align-items:center;gap:7px;color:var(--gold-soft);}
-  .card-txt{font-size:12.5px;color:var(--sub);line-height:1.6;}
+  .card-txt{font-size:12.5px;color:var(--sub);line-height:1.6;margin-bottom:10px;}
 
   table{width:100%;border-collapse:collapse;margin-top:6px;}
   th,td{padding:10px 8px;text-align:left;font-size:13px;border-bottom:1px solid var(--line);}
@@ -50,6 +50,7 @@
   .warn-box{background:rgba(255,77,94,0.08);border:1px solid rgba(255,77,94,0.3);border-radius:12px;
     padding:14px 15px;margin-bottom:18px;font-size:12.5px;color:#FFB4BC;line-height:1.6;}
   .warn-box b{color:#fff;}
+  .warn-box.small{margin-top:14px;margin-bottom:0;}
 
   .rule-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;}
   .rule-dot{width:22px;height:22px;border-radius:50%;background:rgba(255,176,32,0.15);border:1px solid rgba(255,176,32,0.3);
@@ -61,9 +62,9 @@
     background:linear-gradient(135deg,#00E5A0,#00A876);color:#052A1D;font-size:14.5px;font-weight:700;
     text-decoration:none;box-shadow:0 10px 26px rgba(0,229,160,0.28);margin-top:6px;}
 
-  .calc-row{display:flex;gap:10px;margin-bottom:14px;}
-  .calc-field{flex:1;display:flex;flex-direction:column;gap:6px;}
-  .calc-field label{font-size:11.5px;color:var(--sub);font-weight:600;}
+  .calc-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+  .calc-field{flex:1;min-width:90px;display:flex;flex-direction:column;gap:6px;}
+  .calc-field label{font-size:11px;color:var(--sub);font-weight:600;}
   .calc-field input{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);
     background:var(--panel-2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;
     outline:none;}
@@ -72,6 +73,8 @@
   .calc-btn{width:100%;padding:14px;border-radius:12px;border:none;cursor:pointer;
     background:linear-gradient(135deg,var(--gold),#C97A1F);color:#20130A;font-size:14px;font-weight:700;
     box-shadow:0 10px 24px rgba(255,176,32,0.28);}
+  .calc-btn.danger{background:linear-gradient(135deg,#FF7A6E,#C93A2F);color:#2A0904;
+    box-shadow:0 10px 24px rgba(255,77,94,0.28);}
   .calc-btn:active{transform:scale(0.98);}
 
   .calc-summary{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);}
@@ -79,6 +82,7 @@
     color:var(--sub);padding:6px 0;}
   .calc-summary-row b{font-family:'JetBrains Mono',monospace;color:var(--text);font-size:14px;}
   .calc-summary-row b.calc-highlight{color:var(--green);font-size:16px;}
+  .calc-summary-row b.calc-loss{color:var(--red);font-size:16px;}
 
   .calc-table-wrap{max-height:260px;overflow-y:auto;margin-top:14px;border:1px solid var(--line);
     border-radius:10px;padding:0 8px;}
@@ -102,72 +106,149 @@
   </div>
 
   <h1 data-sw="Jinsi Signal Zetu Zinavyofanya Kazi" data-en="How Our Signals Work">Jinsi Signal Zetu Zinavyofanya Kazi</h1>
-  <div class="subtitle" data-sw="Kila siku tunatuma signal MOJA tu. Ukiifunga kwenye profit, unapata ongezeko la 5% ya mtaji wako siku hiyo." data-en="Every day we send just ONE signal. If you close it in profit, you gain 5% of your capital that day.">
-    Kila siku tunatuma signal MOJA tu. Ukiifunga kwenye profit, unapata ongezeko la 5% ya mtaji wako siku hiyo.
+  <div class="subtitle" data-sw="Kila siku tunatuma SIGNAL MOJA TU, ya dakika 5, kwenye Binary Pocket Option. HAKUNA Martingale. Ukishinda unapata payout ya pair hiyo (Pocket Option huishia karibu 92%, kutegemea pair). Ukipoteza, tunasitisha siku hiyo na kuendelea kesho." data-en="Every day we send just ONE signal, 5 minutes, on Binary Pocket Option. There is NO Martingale. If you win you get that pair's payout (Pocket Option tops out around 92%, depending on the pair). If you lose, we stop for the day and continue tomorrow.">
+    Kila siku tunatuma SIGNAL MOJA TU, ya dakika 5, kwenye Binary Pocket Option. HAKUNA Martingale. Ukishinda unapata payout ya pair hiyo (Pocket Option huishia karibu 92%, kutegemea pair). Ukipoteza, tunasitisha siku hiyo na kuendelea kesho.
   </div>
 
+  <!-- CALCULATOR 1: SINGLE TRADE -->
   <div class="card">
-    <div class="card-title">📅 <span data-sw="Mfano: Wiki 1 (kuanzia $50)" data-en="Example: Week 1 (starting from $50)">Mfano: Wiki 1 (kuanzia $50)</span></div>
-    <div class="card-txt" data-sw="Hii ni MFANO WA HISABATI TU — unaodhania ushindi kwa siku zote 7. Kwenye uhalisia wa soko, hutashinda kila siku." data-en="This is a MATH EXAMPLE ONLY — assuming a win every single day. In real market conditions, you will not win every day.">
-      Hii ni MFANO WA HISABATI TU — unaodhania ushindi kwa siku zote 7. Kwenye uhalisia wa soko, hutashinda kila siku.
+    <div class="card-title">💰 <span data-sw="Trade Moja — Unapata Kiasi Gani?" data-en="One Trade — How Much Do You Get?">Trade Moja — Unapata Kiasi Gani?</span></div>
+    <div class="card-txt" data-sw="Weka mtaji wako, kiasi unachoweka kwenye trade (stake), na payout ya pair hiyo, uone hasa unapata kiasi gani ukishinda, na unapoteza kiasi gani ukipoteza." data-en="Enter your capital, the amount you stake on the trade, and that pair's payout, to see exactly how much you gain if you win, and how much you lose if you lose.">
+      Weka mtaji wako, kiasi unachoweka kwenye trade (stake), na payout ya pair hiyo, uone hasa unapata kiasi gani ukishinda, na unapoteza kiasi gani ukipoteza.
     </div>
-    <table>
-      <tr><th data-sw="Siku" data-en="Day">Siku</th><th data-sw="Balance (+5%)" data-en="Balance (+5%)">Balance (+5%)</th></tr>
-      <tr><td class="day">1</td><td class="bal">$52.50</td></tr>
-      <tr><td class="day">2</td><td class="bal">$55.12</td></tr>
-      <tr><td class="day">3</td><td class="bal">$57.88</td></tr>
-      <tr><td class="day">4</td><td class="bal">$60.78</td></tr>
-      <tr><td class="day">5</td><td class="bal">$63.81</td></tr>
-      <tr><td class="day">6</td><td class="bal">$67.00</td></tr>
-      <tr><td class="day">7</td><td class="bal">$70.36</td></tr>
-    </table>
+
+    <div class="calc-row">
+      <div class="calc-field">
+        <label data-sw="Mtaji ($)" data-en="Capital ($)">Mtaji ($)</label>
+        <input type="number" id="stCapital" value="10" min="0" step="0.01" inputmode="decimal">
+      </div>
+      <div class="calc-field">
+        <label data-sw="Kiasi cha Trade ($)" data-en="Trade Stake ($)">Kiasi cha Trade ($)</label>
+        <input type="number" id="stStake" value="1" min="0" step="0.01" inputmode="decimal">
+      </div>
+      <div class="calc-field">
+        <label data-sw="Payout (%)" data-en="Payout (%)">Payout (%)</label>
+        <input type="number" id="stPayout" value="92" min="0" max="100" step="1" inputmode="decimal">
+      </div>
+    </div>
+
+    <button type="button" class="calc-btn" id="stRunBtn" data-sw="Kokotoa Trade Moja" data-en="Calculate One Trade">Kokotoa Trade Moja</button>
+
+    <div class="calc-summary" id="stSummary" style="display:none;">
+      <div class="calc-summary-row">
+        <span data-sw="Ukishinda, Unapata Faida" data-en="If You Win, You Gain">Ukishinda, Unapata Faida</span>
+        <b id="stOutWin" class="calc-highlight">$0.00</b>
+      </div>
+      <div class="calc-summary-row">
+        <span data-sw="Balance Baada ya Kushinda" data-en="Balance After Winning">Balance Baada ya Kushinda</span>
+        <b id="stOutWinBal">$0.00</b>
+      </div>
+      <div class="calc-summary-row">
+        <span data-sw="Ukipoteza, Unapoteza" data-en="If You Lose, You Lose">Ukipoteza, Unapoteza</span>
+        <b id="stOutLoss" class="calc-loss">$0.00</b>
+      </div>
+      <div class="calc-summary-row">
+        <span data-sw="Balance Baada ya Kupoteza" data-en="Balance After Losing">Balance Baada ya Kupoteza</span>
+        <b id="stOutLossBal">$0.00</b>
+      </div>
+    </div>
   </div>
 
+  <!-- CALCULATOR 2: FLAT / RECOMMENDED -->
   <div class="card">
-    <div class="card-title">🧮 <span data-sw="Kokotoa Mwezi Wako Mwenyewe" data-en="Calculate Your Own Month">Kokotoa Mwezi Wako Mwenyewe</span></div>
-    <div class="card-txt" data-sw="Weka mtaji wako na asilimia unayotarajia kwa siku, kisha bonyeza Kokotoa kuona makadirio ya siku 30 (mfano wa hisabati tu)." data-en="Enter your capital and the daily percentage you expect, then press Calculate to see a 30-day projection (math example only).">
-      Weka mtaji wako na asilimia unayotarajia kwa siku, kisha bonyeza Kokotoa kuona makadirio ya siku 30 (mfano wa hisabati tu).
+    <div class="card-title">✅ <span data-sw="Njia Tunayopendekeza — Kiasi Kidogo Kila Siku" data-en="Our Recommended Way — Small Fixed Amount Daily">Njia Tunayopendekeza — Kiasi Kidogo Kila Siku</span></div>
+    <div class="card-txt" data-sw="Badala ya kuweka mtaji wako wote kwenye trade moja, weka KIASI KIDOGO KILICHOWEKWA (mfano $1 kutoka kwenye $10) kila siku. Kwa muda (mfano mwezi), account yako inakua taratibu bila kuhatarisha mtaji wako wote. Hii ni MFANO WA HISABATI TU unaodhania ushindi kila siku — kwa uhalisia hutashinda kila siku." data-en="Instead of staking your entire capital on one trade, stake a SMALL FIXED AMOUNT (e.g. $1 out of $10) every day. Over time (e.g. a month), your account grows gradually without risking your whole capital. This is a MATH EXAMPLE ONLY assuming a win every day — in reality you will not win every day.">
+      Badala ya kuweka mtaji wako wote kwenye trade moja, weka KIASI KIDOGO KILICHOWEKWA (mfano $1 kutoka kwenye $10) kila siku. Kwa muda (mfano mwezi), account yako inakua taratibu bila kuhatarisha mtaji wako wote. Hii ni MFANO WA HISABATI TU unaodhania ushindi kila siku — kwa uhalisia hutashinda kila siku.
     </div>
 
     <div class="calc-row">
       <div class="calc-field">
         <label data-sw="Mtaji wa Kuanzia ($)" data-en="Starting Capital ($)">Mtaji wa Kuanzia ($)</label>
-        <input type="number" id="calcCapital" value="50" min="0" step="0.01" inputmode="decimal">
+        <input type="number" id="flatCapital" value="10" min="0" step="0.01" inputmode="decimal">
       </div>
       <div class="calc-field">
-        <label data-sw="Asilimia kwa Siku (%)" data-en="Daily Percentage (%)">Asilimia kwa Siku (%)</label>
-        <input type="number" id="calcPercent" value="5" min="0" step="0.1" inputmode="decimal">
+        <label data-sw="Kiasi cha Trade kwa Siku ($)" data-en="Daily Trade Amount ($)">Kiasi cha Trade kwa Siku ($)</label>
+        <input type="number" id="flatStake" value="1" min="0" step="0.01" inputmode="decimal">
+      </div>
+      <div class="calc-field">
+        <label data-sw="Payout (%)" data-en="Payout (%)">Payout (%)</label>
+        <input type="number" id="flatPayout" value="92" min="0" max="100" step="1" inputmode="decimal">
       </div>
     </div>
 
-    <button type="button" class="calc-btn" id="calcRunBtn" data-sw="Kokotoa Mwezi Mzima (Siku 30)" data-en="Calculate Full Month (30 Days)">Kokotoa Mwezi Mzima (Siku 30)</button>
+    <button type="button" class="calc-btn" id="flatRunBtn" data-sw="Kokotoa Mwezi Mzima (Siku 30)" data-en="Calculate Full Month (30 Days)">Kokotoa Mwezi Mzima (Siku 30)</button>
 
-    <div class="calc-summary" id="calcSummary" style="display:none;">
+    <div class="calc-summary" id="flatSummary" style="display:none;">
       <div class="calc-summary-row">
         <span data-sw="Mtaji wa Mwanzo" data-en="Starting Capital">Mtaji wa Mwanzo</span>
-        <b id="calcOutStart">$0.00</b>
+        <b id="flatOutStart">$0.00</b>
       </div>
       <div class="calc-summary-row">
         <span data-sw="Balance Baada ya Siku 30" data-en="Balance After Day 30">Balance Baada ya Siku 30</span>
-        <b id="calcOutEnd" class="calc-highlight">$0.00</b>
+        <b id="flatOutEnd" class="calc-highlight">$0.00</b>
       </div>
       <div class="calc-summary-row">
         <span data-sw="Faida Jumla" data-en="Total Profit">Faida Jumla</span>
-        <b id="calcOutProfit">$0.00</b>
+        <b id="flatOutProfit" class="calc-highlight">$0.00</b>
       </div>
     </div>
 
-    <div class="calc-table-wrap" id="calcTableWrap" style="display:none;">
-      <table id="calcTable">
-        <tr><th data-sw="Siku" data-en="Day">Siku</th><th data-sw="Balance" data-en="Balance">Balance</th></tr>
-      </table>
+    <div class="calc-table-wrap" id="flatTableWrap" style="display:none;">
+      <table id="flatTable"></table>
+    </div>
+  </div>
+
+  <!-- CALCULATOR 3: COMPOUNDING / NOT RECOMMENDED -->
+  <div class="card">
+    <div class="card-title">⚠️ <span data-sw="Compounding — Kuweka Kiasi Chote (Hatari)" data-en="Compounding — Staking Everything (Risky)">Compounding — Kuweka Kiasi Chote (Hatari)</span></div>
+    <div class="card-txt" data-sw="Hii ni mfano wa kuweka MTAJI WOTE kila siku kwenye trade, ukishinda kila siku bila kukosa. Namba zinaonekana kubwa haraka, LAKINI HATUPENDEKEZI njia hii — soko haliwezi kushinda kila siku, na siku moja tu ukipoteza, unapoteza KIASI CHOTE ulichokuwa umekusanya." data-en="This is an example of staking your ENTIRE capital every day, winning every single day without fail. The numbers look big fast, BUT WE DO NOT RECOMMEND this approach — the market cannot win every day, and a single loss wipes out everything you had built up." >
+      Hii ni mfano wa kuweka MTAJI WOTE kila siku kwenye trade, ukishinda kila siku bila kukosa. Namba zinaonekana kubwa haraka, LAKINI HATUPENDEKEZI njia hii — soko haliwezi kushinda kila siku, na siku moja tu ukipoteza, unapoteza KIASI CHOTE ulichokuwa umekusanya.
+    </div>
+
+    <div class="calc-row">
+      <div class="calc-field">
+        <label data-sw="Mtaji wa Kuanzia ($)" data-en="Starting Capital ($)">Mtaji wa Kuanzia ($)</label>
+        <input type="number" id="compCapital" value="10" min="0" step="0.01" inputmode="decimal">
+      </div>
+      <div class="calc-field">
+        <label data-sw="Payout (%)" data-en="Payout (%)">Payout (%)</label>
+        <input type="number" id="compPayout" value="92" min="0" max="100" step="1" inputmode="decimal">
+      </div>
+      <div class="calc-field">
+        <label data-sw="Siku" data-en="Days">Siku</label>
+        <input type="number" id="compDays" value="10" min="1" max="20" step="1" inputmode="decimal">
+      </div>
+    </div>
+
+    <button type="button" class="calc-btn danger" id="compRunBtn" data-sw="Kokotoa Compounding (Si Ushauri)" data-en="Calculate Compounding (Not Advice)">Kokotoa Compounding (Si Ushauri)</button>
+
+    <div class="calc-summary" id="compSummary" style="display:none;">
+      <div class="calc-summary-row">
+        <span data-sw="Mtaji wa Mwanzo" data-en="Starting Capital">Mtaji wa Mwanzo</span>
+        <b id="compOutStart">$0.00</b>
+      </div>
+      <div class="calc-summary-row">
+        <span data-sw="Balance ya Mwisho" data-en="Final Balance">Balance ya Mwisho</span>
+        <b id="compOutEnd" class="calc-highlight">$0.00</b>
+      </div>
+    </div>
+
+    <div class="calc-table-wrap" id="compTableWrap" style="display:none;">
+      <table id="compTable"></table>
+    </div>
+
+    <div class="warn-box small">
+      ⚠️ <b data-sw="Kumbuka:" data-en="Remember:">Kumbuka:</b>
+      <span data-sw="Siku moja tu ya kupoteza kwenye compounding inafuta faida za siku nyingi zilizopita. Ndio maana tunashauri utumie njia ya 'Kiasi Kidogo Kila Siku' hapo juu badala ya hii." data-en="A single losing day in compounding wipes out many previous days of profit. That's why we recommend the 'Small Fixed Amount Daily' method above instead of this one.">
+        Siku moja tu ya kupoteza kwenye compounding inafuta faida za siku nyingi zilizopita. Ndio maana tunashauri utumie njia ya "Kiasi Kidogo Kila Siku" hapo juu badala ya hii.
+      </span>
     </div>
   </div>
 
   <div class="warn-box">
     ⚠️ <b data-sw="MUHIMU:" data-en="IMPORTANT:">MUHIMU:</b>
-    <span data-sw="Jedwali hili SI ahadi ya faida wala uhakika wa kila siku kushinda. Soko lina siku za kushinda na siku za kukosa. Usitegemee kufikia namba hizi kila wiki, mwezi, au mwaka — dhumuni lake ni kukuonyesha dhana ya 5% kwa siku, si utabiri wa fedha halisi utakazopata." data-en="This table is NOT a promise of profit or a guarantee of winning every day. The market has winning days and losing days. Do not expect to reach these numbers every week, month, or year — its purpose is only to show you the 5%-per-day concept, not a forecast of the real money you will earn.">
-      Jedwali hili SI ahadi ya faida wala uhakika wa kila siku kushinda. Soko lina siku za kushinda na siku za kukosa. Usitegemee kufikia namba hizi kila wiki, mwezi, au mwaka — dhumuni lake ni kukuonyesha dhana ya 5% kwa siku, si utabiri wa fedha halisi utakazopata.
+    <span data-sw="Mahesabu haya YOTE ni MFANO WA HISABATI TU — yanadhania ushindi kila siku. Soko lina siku za kushinda na siku za kukosa. Usitegemee kufikia namba hizi kila wiki, mwezi, au mwaka — dhumuni lake ni kukuonyesha jinsi payout na money management vinavyofanya kazi, si utabiri wa fedha halisi utakazopata." data-en="ALL of these calculations are MATH EXAMPLES ONLY — they assume a win every day. The market has winning days and losing days. Do not expect to reach these numbers every week, month, or year — the purpose is only to show you how payout and money management work, not a forecast of the real money you will earn.">
+      Mahesabu haya YOTE ni MFANO WA HISABATI TU — yanadhania ushindi kila siku. Soko lina siku za kushinda na siku za kukosa. Usitegemee kufikia namba hizi kila wiki, mwezi, au mwaka — dhumuni lake ni kukuonyesha jinsi payout na money management vinavyofanya kazi, si utabiri wa fedha halisi utakazopata.
     </span>
   </div>
 
@@ -197,8 +278,8 @@
 
     <div class="rule-item">
       <div class="rule-dot">4</div>
-      <div class="rule-txt" data-sw="Fuata kanuni na signal kwa taratibu — utaelewa vizuri zaidi kuliko kutumia tamaa." data-en="Follow the rules and signals patiently — you'll understand far better than acting out of greed.">
-        Fuata kanuni na signal kwa taratibu — utaelewa vizuri zaidi kuliko kutumia tamaa.
+      <div class="rule-txt" data-sw="Fuata kanuni na signal kwa taratibu — mafanikio ya kudumu huja kidogo kidogo, si kwa tamaa ya haraka." data-en="Follow the rules and signals patiently — lasting success comes gradually, not through the desire for quick riches.">
+        Fuata kanuni na signal kwa taratibu — mafanikio ya kudumu huja kidogo kidogo, si kwa tamaa ya haraka.
       </div>
     </div>
 
@@ -216,6 +297,8 @@
 </div>
 
 <script>
+function isSw(){ return document.getElementById('btnSw').classList.contains('active'); }
+
 function setLang(lang){
   document.querySelectorAll('[data-sw]').forEach(el=>{
     const val = el.dataset[lang];
@@ -227,45 +310,95 @@ function setLang(lang){
 document.getElementById('btnSw').addEventListener('click', ()=>setLang('sw'));
 document.getElementById('btnEn').addEventListener('click', ()=>setLang('en'));
 
-function runCalc(){
-  const capitalInput = document.getElementById('calcCapital');
-  const percentInput = document.getElementById('calcPercent');
+// ---- Calculator 1: Single Trade ----
+function runSingleTrade(){
+  let capital = parseFloat(document.getElementById('stCapital').value);
+  let stake = parseFloat(document.getElementById('stStake').value);
+  let payout = parseFloat(document.getElementById('stPayout').value);
 
-  let capital = parseFloat(capitalInput.value);
-  let percent = parseFloat(percentInput.value);
+  if(isNaN(capital) || capital <= 0) capital = 10;
+  if(isNaN(stake) || stake <= 0) stake = 1;
+  if(isNaN(payout) || payout <= 0) payout = 90;
 
-  if(isNaN(capital) || capital <= 0) capital = 50;
-  if(isNaN(percent) || percent < 0) percent = 5;
+  const profit = stake * (payout / 100);
+  const winBalance = capital + profit;
+  const lossBalance = capital - stake;
 
+  document.getElementById('stOutWin').textContent = '$' + profit.toFixed(2);
+  document.getElementById('stOutWinBal').textContent = '$' + winBalance.toFixed(2);
+  document.getElementById('stOutLoss').textContent = '$' + stake.toFixed(2);
+  document.getElementById('stOutLossBal').textContent = '$' + lossBalance.toFixed(2);
+  document.getElementById('stSummary').style.display = 'block';
+}
+document.getElementById('stRunBtn').addEventListener('click', runSingleTrade);
+
+// ---- Calculator 2: Flat (recommended) ----
+function runFlat(){
+  let capital = parseFloat(document.getElementById('flatCapital').value);
+  let stake = parseFloat(document.getElementById('flatStake').value);
+  let payout = parseFloat(document.getElementById('flatPayout').value);
+
+  if(isNaN(capital) || capital <= 0) capital = 10;
+  if(isNaN(stake) || stake <= 0) stake = 1;
+  if(isNaN(payout) || payout <= 0) payout = 90;
+
+  const dayLabel = isSw() ? 'Siku' : 'Day';
+  const balLabel = 'Balance';
+  const profitPerDay = stake * (payout / 100);
   const days = 30;
-  const rate = 1 + (percent / 100);
+
+  const tbl = document.getElementById('flatTable');
+  tbl.innerHTML = '<tr><th>' + dayLabel + '</th><th>' + balLabel + '</th></tr>';
+
   let balance = capital;
-
-  const tbl = document.getElementById('calcTable');
-  tbl.innerHTML = '<tr><th data-sw="Siku" data-en="Day">' +
-    (document.getElementById('btnSw').classList.contains('active') ? 'Siku' : 'Day') +
-    '</th><th>' +
-    (document.getElementById('btnSw').classList.contains('active') ? 'Balance' : 'Balance') +
-    '</th></tr>';
-
   for(let d = 1; d <= days; d++){
-    balance = balance * rate;
+    balance += profitPerDay;
     const row = document.createElement('tr');
     row.innerHTML = '<td class="day">' + d + '</td><td class="bal">$' + balance.toFixed(2) + '</td>';
     tbl.appendChild(row);
   }
 
-  const profit = balance - capital;
-
-  document.getElementById('calcOutStart').textContent = '$' + capital.toFixed(2);
-  document.getElementById('calcOutEnd').textContent = '$' + balance.toFixed(2);
-  document.getElementById('calcOutProfit').textContent = '$' + profit.toFixed(2);
-
-  document.getElementById('calcSummary').style.display = 'block';
-  document.getElementById('calcTableWrap').style.display = 'block';
+  const totalProfit = balance - capital;
+  document.getElementById('flatOutStart').textContent = '$' + capital.toFixed(2);
+  document.getElementById('flatOutEnd').textContent = '$' + balance.toFixed(2);
+  document.getElementById('flatOutProfit').textContent = '$' + totalProfit.toFixed(2);
+  document.getElementById('flatSummary').style.display = 'block';
+  document.getElementById('flatTableWrap').style.display = 'block';
 }
+document.getElementById('flatRunBtn').addEventListener('click', runFlat);
 
-document.getElementById('calcRunBtn').addEventListener('click', runCalc);
+// ---- Calculator 3: Compounding (not recommended) ----
+function runCompounding(){
+  let capital = parseFloat(document.getElementById('compCapital').value);
+  let payout = parseFloat(document.getElementById('compPayout').value);
+  let days = parseInt(document.getElementById('compDays').value, 10);
+
+  if(isNaN(capital) || capital <= 0) capital = 10;
+  if(isNaN(payout) || payout <= 0) payout = 90;
+  if(isNaN(days) || days <= 0) days = 10;
+  if(days > 20) days = 20;
+
+  const dayLabel = isSw() ? 'Siku' : 'Day';
+  const balLabel = 'Balance';
+  const rate = 1 + (payout / 100);
+
+  const tbl = document.getElementById('compTable');
+  tbl.innerHTML = '<tr><th>' + dayLabel + '</th><th>' + balLabel + '</th></tr>';
+
+  let balance = capital;
+  for(let d = 1; d <= days; d++){
+    balance *= rate;
+    const row = document.createElement('tr');
+    row.innerHTML = '<td class="day">' + d + '</td><td class="bal">$' + balance.toFixed(2) + '</td>';
+    tbl.appendChild(row);
+  }
+
+  document.getElementById('compOutStart').textContent = '$' + capital.toFixed(2);
+  document.getElementById('compOutEnd').textContent = '$' + balance.toFixed(2);
+  document.getElementById('compSummary').style.display = 'block';
+  document.getElementById('compTableWrap').style.display = 'block';
+}
+document.getElementById('compRunBtn').addEventListener('click', runCompounding);
 </script>
 </body>
 </html>
