@@ -2,21 +2,20 @@
 // That means your API_TOKEN stays hidden from anyone viewing your site's
 // source code — only this server-side function can see it.
 //
-// UPDATED: switched to the new PocketPartners v1 endpoint, which uses
-// Bearer token authentication instead of an MD5 hash in the URL.
+// UPDATED: new PocketPartners v1 endpoint with Bearer token auth,
+// and a fresh API token issued by their support team (ticket #1418164).
 //
-// DEBUGGING: once this is connected via GitHub, go to your Netlify project
-// -> Functions -> check-id -> you'll see real invocation logs there,
-// including every console.log/console.error below.
+// DEBUGGING: go to your Netlify/Cloudflare project -> Functions ->
+// check-id -> real invocation logs, including every console.log below.
 //
-// IMPORTANT (security): move API_TOKEN into Netlify's Environment
-// Variables (Site configuration -> Environment variables) instead of
-// leaving the real value hardcoded here.
+// IMPORTANT (security): move API_TOKEN into your host's Environment
+// Variables instead of leaving the real value hardcoded here, once
+// everything is confirmed working.
 
 const https = require('https');
 
 const PARTNER_ID = process.env.PARTNER_ID || '858680';
-const API_TOKEN = process.env.API_TOKEN || '0lNHhVt8trByyUNZncA5';
+const API_TOKEN = process.env.API_TOKEN || 'ikY0U2dLzG1k1rttqtCq';
 
 function httpsGet(url, headers) {
   return new Promise((resolve, reject) => {
@@ -56,7 +55,6 @@ exports.handler = async (event) => {
   }
 
   try {
-    // NEW endpoint - no hash needed, token goes in the Authorization header
     const url = `https://pocketpartners.com/api/v1/user-info/${encodeURIComponent(userId)}/${PARTNER_ID}`;
     console.log('[check-id] requesting:', url);
 
@@ -88,9 +86,6 @@ exports.handler = async (event) => {
       return { statusCode: 200, headers, body: JSON.stringify(failResponse) };
     }
 
-    // Flexible field picker - tries several possible name variants,
-    // since PocketPartners said "some field names are different" on
-    // the new endpoint but didn't give exact names yet.
     function pick(obj, ...aliases) {
       const keys = Object.keys(obj);
       for (const alias of aliases) {
