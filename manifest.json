@@ -2,7 +2,7 @@
   "name": "Usajili wa VIP - Trading Signals",
   "short_name": "VIP Usajili",
   "description": "Jiunge na kundi la VIP la signals za trading bure",
-  "start_url": "./index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
