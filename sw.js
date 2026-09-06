@@ -1,4 +1,4 @@
-const CACHE_NAME = 'usajili-vip-v1';
+const CACHE_NAME = 'usajili-vip-v2';
 const ASSETS = [
   './index.html',
   './manifest.json',
