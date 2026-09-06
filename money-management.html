@@ -60,6 +60,28 @@
   .whatsapp-cta{display:flex;align-items:center;justify-content:center;width:100%;padding:15px;border-radius:12px;
     background:linear-gradient(135deg,#00E5A0,#00A876);color:#052A1D;font-size:14.5px;font-weight:700;
     text-decoration:none;box-shadow:0 10px 26px rgba(0,229,160,0.28);margin-top:6px;}
+
+  .calc-row{display:flex;gap:10px;margin-bottom:14px;}
+  .calc-field{flex:1;display:flex;flex-direction:column;gap:6px;}
+  .calc-field label{font-size:11.5px;color:var(--sub);font-weight:600;}
+  .calc-field input{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);
+    background:var(--panel-2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;
+    outline:none;}
+  .calc-field input:focus{border-color:var(--gold);}
+
+  .calc-btn{width:100%;padding:14px;border-radius:12px;border:none;cursor:pointer;
+    background:linear-gradient(135deg,var(--gold),#C97A1F);color:#20130A;font-size:14px;font-weight:700;
+    box-shadow:0 10px 24px rgba(255,176,32,0.28);}
+  .calc-btn:active{transform:scale(0.98);}
+
+  .calc-summary{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);}
+  .calc-summary-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;
+    color:var(--sub);padding:6px 0;}
+  .calc-summary-row b{font-family:'JetBrains Mono',monospace;color:var(--text);font-size:14px;}
+  .calc-summary-row b.calc-highlight{color:var(--green);font-size:16px;}
+
+  .calc-table-wrap{max-height:260px;overflow-y:auto;margin-top:14px;border:1px solid var(--line);
+    border-radius:10px;padding:0 8px;}
 </style>
 </head>
 <body>
@@ -99,6 +121,47 @@
       <tr><td class="day">6</td><td class="bal">$67.00</td></tr>
       <tr><td class="day">7</td><td class="bal">$70.36</td></tr>
     </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🧮 <span data-sw="Kokotoa Mwezi Wako Mwenyewe" data-en="Calculate Your Own Month">Kokotoa Mwezi Wako Mwenyewe</span></div>
+    <div class="card-txt" data-sw="Weka mtaji wako na asilimia unayotarajia kwa siku, kisha bonyeza Kokotoa kuona makadirio ya siku 30 (mfano wa hisabati tu)." data-en="Enter your capital and the daily percentage you expect, then press Calculate to see a 30-day projection (math example only).">
+      Weka mtaji wako na asilimia unayotarajia kwa siku, kisha bonyeza Kokotoa kuona makadirio ya siku 30 (mfano wa hisabati tu).
+    </div>
+
+    <div class="calc-row">
+      <div class="calc-field">
+        <label data-sw="Mtaji wa Kuanzia ($)" data-en="Starting Capital ($)">Mtaji wa Kuanzia ($)</label>
+        <input type="number" id="calcCapital" value="50" min="0" step="0.01" inputmode="decimal">
+      </div>
+      <div class="calc-field">
+        <label data-sw="Asilimia kwa Siku (%)" data-en="Daily Percentage (%)">Asilimia kwa Siku (%)</label>
+        <input type="number" id="calcPercent" value="5" min="0" step="0.1" inputmode="decimal">
+      </div>
+    </div>
+
+    <button type="button" class="calc-btn" id="calcRunBtn" data-sw="Kokotoa Mwezi Mzima (Siku 30)" data-en="Calculate Full Month (30 Days)">Kokotoa Mwezi Mzima (Siku 30)</button>
+
+    <div class="calc-summary" id="calcSummary" style="display:none;">
+      <div class="calc-summary-row">
+        <span data-sw="Mtaji wa Mwanzo" data-en="Starting Capital">Mtaji wa Mwanzo</span>
+        <b id="calcOutStart">$0.00</b>
+      </div>
+      <div class="calc-summary-row">
+        <span data-sw="Balance Baada ya Siku 30" data-en="Balance After Day 30">Balance Baada ya Siku 30</span>
+        <b id="calcOutEnd" class="calc-highlight">$0.00</b>
+      </div>
+      <div class="calc-summary-row">
+        <span data-sw="Faida Jumla" data-en="Total Profit">Faida Jumla</span>
+        <b id="calcOutProfit">$0.00</b>
+      </div>
+    </div>
+
+    <div class="calc-table-wrap" id="calcTableWrap" style="display:none;">
+      <table id="calcTable">
+        <tr><th data-sw="Siku" data-en="Day">Siku</th><th data-sw="Balance" data-en="Balance">Balance</th></tr>
+      </table>
+    </div>
   </div>
 
   <div class="warn-box">
@@ -163,6 +226,46 @@ function setLang(lang){
 }
 document.getElementById('btnSw').addEventListener('click', ()=>setLang('sw'));
 document.getElementById('btnEn').addEventListener('click', ()=>setLang('en'));
+
+function runCalc(){
+  const capitalInput = document.getElementById('calcCapital');
+  const percentInput = document.getElementById('calcPercent');
+
+  let capital = parseFloat(capitalInput.value);
+  let percent = parseFloat(percentInput.value);
+
+  if(isNaN(capital) || capital <= 0) capital = 50;
+  if(isNaN(percent) || percent < 0) percent = 5;
+
+  const days = 30;
+  const rate = 1 + (percent / 100);
+  let balance = capital;
+
+  const tbl = document.getElementById('calcTable');
+  tbl.innerHTML = '<tr><th data-sw="Siku" data-en="Day">' +
+    (document.getElementById('btnSw').classList.contains('active') ? 'Siku' : 'Day') +
+    '</th><th>' +
+    (document.getElementById('btnSw').classList.contains('active') ? 'Balance' : 'Balance') +
+    '</th></tr>';
+
+  for(let d = 1; d <= days; d++){
+    balance = balance * rate;
+    const row = document.createElement('tr');
+    row.innerHTML = '<td class="day">' + d + '</td><td class="bal">$' + balance.toFixed(2) + '</td>';
+    tbl.appendChild(row);
+  }
+
+  const profit = balance - capital;
+
+  document.getElementById('calcOutStart').textContent = '$' + capital.toFixed(2);
+  document.getElementById('calcOutEnd').textContent = '$' + balance.toFixed(2);
+  document.getElementById('calcOutProfit').textContent = '$' + profit.toFixed(2);
+
+  document.getElementById('calcSummary').style.display = 'block';
+  document.getElementById('calcTableWrap').style.display = 'block';
+}
+
+document.getElementById('calcRunBtn').addEventListener('click', runCalc);
 </script>
 </body>
 </html>
