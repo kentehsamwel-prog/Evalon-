@@ -532,20 +532,6 @@
       <span data-sw="🚀 Jisajili Sasa" data-en="🚀 Register Now">🚀 Jisajili Sasa</span>
     </a>
 
-    <div class="guide-block">
-      <div class="guide-title">📝 <span data-sw="Jina la Kujiandikisha" data-en="Registration Name">Jina la Kujiandikisha</span></div>
-      <div class="guide-txt" data-sw="Andika majina yako kamili kama yalivyo kwenye kitambulisho chako halali (NIDA, kitambulisho cha kupiga kura, au leseni ya udereva). Kama huna kitambulisho chochote, unaweza kutumia cha ndugu, jamaa, rafiki, mzazi au mlezi unayemwamini — lakini hakikisha kama utatumia kitambulisho cha mtu mwingine, majina uliyoandika yawe ni ya mmiliki halisi wa kitambulisho hicho, si yako." data-en="Write your full names exactly as they appear on a valid ID (National ID, voter's card, or driver's license). If you don't have any ID, you can use a trusted relative's, family member's, friend's, parent's, or guardian's ID — but if you use someone else's ID, make sure the names you enter are that ID owner's real names, not your own.">
-        Andika majina yako kamili kama yalivyo kwenye kitambulisho chako halali (NIDA, kitambulisho cha kupiga kura, au leseni ya udereva). Kama huna kitambulisho chochote, unaweza kutumia cha ndugu, jamaa, rafiki, mzazi au mlezi unayemwamini — lakini hakikisha kama utatumia kitambulisho cha mtu mwingine, majina uliyoandika yawe ni ya mmiliki halisi wa kitambulisho hicho, si yako.
-      </div>
-    </div>
-
-    <div class="guide-block">
-      <div class="guide-title">💳 <span data-sw="Kuweka Pesa (Deposit)" data-en="Depositing Money">Kuweka Pesa (Deposit)</span></div>
-      <div class="guide-txt" data-sw="Wakati wa kuweka pesa, majina hayahitajiki kufanana na kitambulisho. Muhimu zaidi: kama unatumia mtandao wa simu (mobile money) kuweka pesa, ni lazima namba hiyo hiyo ndiyo itumike kutoa pesa (withdraw) — namba tofauti haiwezi kutoa fedha zilizowekwa na namba nyingine. Kama unatumia njia nyingine kama crypto au mitandao mingine, sheria hii ya namba kufanana haihusiki." data-en="When depositing, the name doesn't need to match your ID. What matters most: if you use mobile money to deposit, the same number must be used to withdraw — a different number cannot withdraw funds deposited from another number. If you use another method like crypto or other networks, this same-number rule doesn't apply.">
-        Wakati wa kuweka pesa, majina hayahitajiki kufanana na kitambulisho. Muhimu zaidi: kama unatumia mtandao wa simu (mobile money) kuweka pesa, ni lazima namba hiyo hiyo ndiyo itumike kutoa pesa (withdraw) — namba tofauti haiwezi kutoa fedha zilizowekwa na namba nyingine. Kama unatumia njia nyingine kama crypto au mitandao mingine, sheria hii ya namba kufanana haihusiki.
-      </div>
-    </div>
-
     <div class="wellwish">
       🤝 <span data-sw="Tunakutakia mafanikio mema katika safari yako ya trading — kuwa na nidhamu, fuata signals kwa umakini, na mafanikio yatakuja." data-en="We wish you great success on your trading journey — stay disciplined, follow the signals carefully, and success will come.">Tunakutakia mafanikio mema katika safari yako ya trading — kuwa na nidhamu, fuata signals kwa umakini, na mafanikio yatakuja.</span>
     </div>
@@ -736,9 +722,17 @@ if(isWeekend){
     reg_date: {sw:'Tarehe ya Usajili', en:'Registration Date'},
     country: {sw:'Nchi', en:'Country'},
     verified: {sw:'Verified', en:'Verified'},
-    status: {sw:'Hali ya Akaunti', en:'Account Status'}
+    status: {sw:'Hali ya Akaunti', en:'Account Status'},
+    balance: {sw:'Balance ya Sasa', en:'Current Balance'},
+    total_deposits: {sw:'Jumla ya Deposit', en:'Total Deposited'}
   };
-  const DISPLAY_ORDER = ['uid','reg_date','country','verified','status'];
+  const DISPLAY_ORDER = ['uid','reg_date','country','verified','status','balance','total_deposits'];
+  const MIN_DEPOSIT = 10;
+
+  function fmtMoney(v){
+    const n = parseFloat(v);
+    return isNaN(n) ? '$0.00' : '$' + n.toFixed(2);
+  }
 
   function norm(s){ return String(s).toLowerCase().replace(/[\s_]/g,''); }
 
@@ -766,7 +760,7 @@ if(isWeekend){
     resultEl.innerHTML = '';
 
     try{
-      const res = await fetch(`/.netlify/functions/check-id?user_id=${encodeURIComponent(id)}`);
+      const res = await fetch(`https://check-id.vip-signal.workers.dev?user_id=${encodeURIComponent(id)}`);
       const json = await res.json();
 
       if(json.ok && json.registered && json.data){
@@ -777,54 +771,57 @@ if(isWeekend){
           country: getField(d,'country','Country'),
           verified: getField(d,'verified','Verified'),
           status: getField(d,'status','Status'),
-          has_deposited: getField(d,'has_deposited')
+          balance: getField(d,'balance','Balance'),
+          total_deposits: getField(d,'total_deposits','sum_deposits','deposits')
         };
 
         let rows = '';
         DISPLAY_ORDER.forEach(key=>{
-          const val = normalized[key];
+          let val = normalized[key];
           if(val === undefined || val === null || val === '') return;
+          if(key === 'balance' || key === 'total_deposits') val = fmtMoney(val);
           const lbl = LABELS[key] ? LABELS[key][LANG] : key;
           rows += `<div class="row"><span>${lbl}</span><b>${val}</b></div>`;
         });
 
         const verified = isVerifiedTrue(normalized.verified);
-        const hasDeposited = normalized.has_deposited === true;
+        const depositAmount = parseFloat(normalized.total_deposits) || 0;
+        const hasEnoughDeposit = depositAmount >= MIN_DEPOSIT;
         let noticeHtml = '';
         if(!verified){
           noticeHtml = `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,77,94,0.25);">
-            ⚠️ ${LANG==='sw'
-              ? 'Samahani, akaunti yako haijathibitishwa (verify) bado. Tafadhali verify akaunti yako kwanza, kisha uweke mtaji wako.'
-              : 'Sorry, your account is not verified yet. Please verify your account first, then deposit your capital.'}
+            🙏 ${LANG==='sw'
+              ? 'Samahani rafiki, bado akaunti yako haijathibitishwa (Verified: No). Tafadhali nenda kwenye akaunti yako ya Pocket Option, fungua sehemu ya Profile/Verification, weka jina lako kamili, pakia picha ya kitambulisho chako (kitambulisho cha taifa, passport, au leseni), kisha subiri wathibitishe (kawaida saa chache mpaka siku moja). Ukishathibitishwa, weka mtaji wako angalau $10 (kama TZS 27,000) kisha uangalie tena hapa. 💪'
+              : "We're sorry, your account is not verified yet (Verified: No). Please go to your Pocket Option account, open the Profile/Verification section, enter your full name, upload a photo of your ID (national ID, passport, or driver's license), then wait for approval (usually a few hours to one day). Once approved, deposit your capital, at least $10 (about TZS 27,000), then check again here. 💪"}
           </div>`;
-        } else if(!hasDeposited){
+        } else if(!hasEnoughDeposit){
           noticeHtml = `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,176,32,0.3);">
-            💰 ${LANG==='sw'
-              ? 'Verified ✅ lakini bado hujaweka mtaji (deposit). Tafadhali weka mtaji wako kisha tuma ID yako WhatsApp ili tukuunge kwenye kundi la VIP.'
-              : 'Verified ✅ but you have not deposited yet. Please deposit your capital then send your ID on WhatsApp so we can add you to the VIP group.'}
+            🎉 ${LANG==='sw'
+              ? `Hongera, umethibitishwa (Verified) ✅! Kimebaki kimoja tu — weka mtaji wako angalau $${MIN_DEPOSIT} (kama TZS 27,000). Deposit yako ya sasa ni ${fmtMoney(depositAmount)}. Ukishaweka, tuma ID yako WhatsApp ili tukujumuishe kwenye kundi la VIP, kisha uanze kupokea signal. 💪`
+              : `Congratulations, you're verified ✅! Just one step left — deposit at least $${MIN_DEPOSIT} (about TZS 27,000). Your current deposit is ${fmtMoney(depositAmount)}. Once done, send your ID on WhatsApp so we can add you to the VIP group, then you'll start receiving signals. 💪`}
           </div>`;
         } else {
           noticeHtml = `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,229,160,0.25);">
-            ✅ ${LANG==='sw'
-              ? 'Verified na umeshaweka mtaji! Tuma ID yako WhatsApp ili tukuunge kwenye kundi la VIP haraka.'
-              : 'Verified and you have already deposited! Send your ID on WhatsApp so we can add you to the VIP group right away.'}
+            🎉🥳 ${LANG==='sw'
+              ? 'Hongera sana rafiki! Umethibitishwa (Verified) na umeshaweka mtaji wa kutosha! ✅ Tuma ID yako WhatsApp sasa ili tukujumuishe kwenye kundi la VIP haraka, kisha uanze kupokea signal. Karibu sana! 🚀'
+              : "Congratulations! You're verified and you've deposited enough! ✅ Send your ID on WhatsApp now so we can add you to the VIP group right away, then you'll start receiving signals. Welcome aboard! 🚀"}
           </div>`;
         }
 
         resultEl.innerHTML = `<div class="ok">
-          ✅ ${LANG==='sw' ? 'Umesajiliwa kupitia link yetu!' : 'You are registered through our link!'}
+          🎉 ${LANG==='sw' ? 'Hongera! Umesajiliwa kupitia link yetu!' : 'Congratulations! You are registered through our link!'}
           ${rows}
           ${noticeHtml}
         </div>`;
       } else {
         resultEl.innerHTML = `<div class="bad">
-          ❌ ${LANG==='sw'
-            ? 'ID hii haijasajiliwa kupitia link yetu. Tumia link ya "Jisajili Sasa" hapo juu, au wasiliana WhatsApp kama unadhani hii ni kosa.'
-            : 'This ID is not registered through our link. Use the "Register Now" link above, or contact WhatsApp if you think this is a mistake.'}
+          🙏 ${LANG==='sw'
+            ? 'Samahani rafiki, ID hii haijasajiliwa kupitia link yetu bado. Tafadhali tumia link ya "Jisajili Sasa" hapo juu, au wasiliana nasi WhatsApp kama unadhani hii ni kosa. Tupo tayari kukusaidia. 🤝'
+            : "We're sorry, this ID is not registered through our link yet. Please use the \"Register Now\" link above, or contact us on WhatsApp if you think this is a mistake. We're happy to help. 🤝"}
         </div>`;
       }
     } catch(e){
-      resultEl.innerHTML = `<div class="bad">⚠️ ${LANG==='sw' ? 'Imeshindikana kuangalia kwa sasa — jaribu tena baadaye au tuma WhatsApp.' : 'Could not check right now — try again later or message WhatsApp.'}</div>`;
+      resultEl.innerHTML = `<div class="bad">🙏 ${LANG==='sw' ? 'Samahani, imeshindikana kuangalia kwa sasa — tafadhali jaribu tena baadaye au tuma ujumbe WhatsApp.' : "We're sorry, we couldn't check right now — please try again later or send us a message on WhatsApp."}</div>`;
     }
     btn.disabled = false;
     btn.textContent = origText;
