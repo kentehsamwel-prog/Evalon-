@@ -86,6 +86,20 @@
 
   .calc-table-wrap{max-height:260px;overflow-y:auto;margin-top:14px;border:1px solid var(--line);
     border-radius:10px;padding:0 8px;}
+
+  .mart-step{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;margin-bottom:10px;}
+  .mart-step-head{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;
+    color:var(--gold-soft);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+  .mart-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;
+    color:var(--sub);padding:4px 0;}
+  .mart-row b{font-family:'JetBrains Mono',monospace;font-size:13.5px;}
+  .mart-row b.mv-loss{color:var(--red);}
+  .mart-row b.mv-win{color:var(--green);}
+  .mart-row.net-row{border-top:1px dashed var(--line);margin-top:6px;padding-top:8px;}
+  .mart-row.net-row span{color:var(--text);font-weight:600;}
+  .mart-row.net-row b.net-pos{color:var(--green);font-size:15px;}
+  .mart-row.net-row b.net-neg{color:var(--red);font-size:15px;}
 </style>
 </head>
 <body>
@@ -245,11 +259,85 @@
     </div>
   </div>
 
+  <!-- CALCULATOR 4: MARTINGALE -->
+  <div class="card">
+    <div class="card-title">🔁 <span data-sw="Martingale — Kuongeza Baada ya Kupoteza" data-en="Martingale — Increasing After a Loss">Martingale — Kuongeza Baada ya Kupoteza</span></div>
+    <div class="card-txt" data-sw="Martingale ni njia ambayo baadhi ya watu hutumia kujaribu kufidia hasara: mfano, leo umeweka $1 ukapoteza, kesho unaweka $2 ili ukishinda ufidie hasara ya jana pamoja na faida. HII SIYO LAZIMA — ni chaguo lako mwenyewe. Sisi kwenye signal zetu HATULAZIMISHI Martingale — ukipoteza, tunasimama siku hiyo bila kuongeza kiasi. Weka namba hapa chini uone hasa nini kinatokea ukiendelea kupoteza mfululizo." data-en="Martingale is a method some people use to try to recover a loss: for example, today you stake $1 and lose, tomorrow you stake $2 so that if you win, it covers yesterday's loss plus a profit. THIS IS NOT REQUIRED — it's your own choice. In our signals, we DO NOT require Martingale — if you lose, we stop for that day without increasing the stake. Enter numbers below to see exactly what happens if losses continue in a row.">
+      Martingale ni njia ambayo baadhi ya watu hutumia kujaribu kufidia hasara: mfano, leo umeweka $1 ukapoteza, kesho unaweka $2 ili ukishinda ufidie hasara ya jana pamoja na faida. HII SIYO LAZIMA — ni chaguo lako mwenyewe. Sisi kwenye signal zetu HATULAZIMISHI Martingale — ukipoteza, tunasimama siku hiyo bila kuongeza kiasi. Weka namba hapa chini uone hasa nini kinatokea ukiendelea kupoteza mfululizo.
+    </div>
+
+    <div class="calc-row">
+      <div class="calc-field">
+        <label data-sw="Kiasi cha Kuanzia ($)" data-en="Starting Stake ($)">Kiasi cha Kuanzia ($)</label>
+        <input type="number" id="martStart" value="1" min="0" step="0.01" inputmode="decimal">
+      </div>
+      <div class="calc-field">
+        <label data-sw="Mara Ngapi Kuongeza" data-en="Multiplier">Mara Ngapi Kuongeza</label>
+        <input type="number" id="martMultiplier" value="2" min="1" step="0.1" inputmode="decimal">
+      </div>
+      <div class="calc-field">
+        <label data-sw="Payout (%)" data-en="Payout (%)">Payout (%)</label>
+        <input type="number" id="martPayout" value="92" min="0" max="100" step="1" inputmode="decimal">
+      </div>
+    </div>
+
+    <div class="calc-row">
+      <div class="calc-field">
+        <label data-sw="Idadi ya Trade za Kuonyesha" data-en="Number of Trades to Show">Idadi ya Trade za Kuonyesha</label>
+        <input type="number" id="martSteps" value="6" min="1" max="12" step="1" inputmode="decimal">
+      </div>
+    </div>
+
+    <button type="button" class="calc-btn danger" id="martRunBtn" data-sw="Kokotoa Martingale" data-en="Calculate Martingale">Kokotoa Martingale</button>
+
+    <div id="martResultsWrap" style="display:none;margin-top:14px;"></div>
+
+    <div class="warn-box small">
+      ⚠️ <b data-sw="Kumbuka:" data-en="Remember:">Kumbuka:</b>
+      <span data-sw="Kwa sababu payout haifikii 100%, kila unapoongeza kiasi baada ya kupoteza, kiasi kinachohitajika kufidia kinaongezeka haraka sana. Ukiangalia jedwali hapo juu, baada ya kupoteza mara kadhaa mfululizo, hata ukishinda inawezekana usifidie hasara yote — ndio maana Martingale ni njia ya hatari kubwa, hasa kwenye Binary." data-en="Because the payout is below 100%, every time you increase the stake after a loss, the amount needed to recover grows very fast. Looking at the table above, after several consecutive losses, even a win may not fully recover the loss — which is why Martingale is a high-risk method, especially on Binary.">
+        Kwa sababu payout haifikii 100%, kila unapoongeza kiasi baada ya kupoteza, kiasi kinachohitajika kufidia kinaongezeka haraka sana. Ukiangalia jedwali hapo juu, baada ya kupoteza mara kadhaa mfululizo, hata ukishinda inawezekana usifidie hasara yote — ndio maana Martingale ni njia ya hatari kubwa, hasa kwenye Binary.
+      </span>
+    </div>
+  </div>
+
   <div class="warn-box">
     ⚠️ <b data-sw="MUHIMU:" data-en="IMPORTANT:">MUHIMU:</b>
     <span data-sw="Mahesabu haya YOTE ni MFANO WA HISABATI TU — yanadhania ushindi kila siku. Soko lina siku za kushinda na siku za kukosa. Usitegemee kufikia namba hizi kila wiki, mwezi, au mwaka — dhumuni lake ni kukuonyesha jinsi payout na money management vinavyofanya kazi, si utabiri wa fedha halisi utakazopata." data-en="ALL of these calculations are MATH EXAMPLES ONLY — they assume a win every day. The market has winning days and losing days. Do not expect to reach these numbers every week, month, or year — the purpose is only to show you how payout and money management work, not a forecast of the real money you will earn.">
       Mahesabu haya YOTE ni MFANO WA HISABATI TU — yanadhania ushindi kila siku. Soko lina siku za kushinda na siku za kukosa. Usitegemee kufikia namba hizi kila wiki, mwezi, au mwaka — dhumuni lake ni kukuonyesha jinsi payout na money management vinavyofanya kazi, si utabiri wa fedha halisi utakazopata.
     </span>
+  </div>
+
+
+  <div class="card">
+    <div class="card-title">🎯 <span data-sw="Je, Binary ni Kamari? Ukweli" data-en="Is Binary Gambling? The Truth">Je, Binary ni Kamari? Ukweli</span></div>
+
+    <div class="rule-item">
+      <div class="rule-dot">1</div>
+      <div class="rule-txt" data-sw="Watu wengi husema 'Binary ni kamari' na 'Forex ni utapeli.' Hii si maneno ya uongo tu — kwa sababu Binary inachukua muda mfupi sana na jibu linakuja haraka, mtu anaweza kuifanya kama kamari kama hana mpango wowote." data-en="Many people say 'Binary is gambling' and 'Forex is a scam.' This isn't just made up — because Binary takes such a short time and the answer comes fast, a person can turn it into gambling if they have no plan at all.">
+        Watu wengi husema 'Binary ni kamari' na 'Forex ni utapeli.' Hii si maneno ya uongo tu — kwa sababu Binary inachukua muda mfupi sana na jibu linakuja haraka, mtu anaweza kuifanya kama kamari kama hana mpango wowote.
+      </div>
+    </div>
+
+    <div class="rule-item">
+      <div class="rule-dot">2</div>
+      <div class="rule-txt" data-sw="Tofauti kati ya KAMARI na BIASHARA (trading) siyo soko lenyewe — ni JINSI mtu anavyotumia fedha zake. Kamari ni kuweka fedha bila mpango, bila kufuata signal, ukitegemea bahati tu na tamaa ya kupata pesa haraka. Biashara yenye mafanikio ni kufuata signal, kuweka kiasi kidogo tu, na kusimama ukipoteza — kama tulivyoeleza hapo juu." data-en="The difference between GAMBLING and TRADING isn't the market — it's HOW a person uses their money. Gambling is staking money with no plan, ignoring signals, relying only on luck and the desire for quick money. Successful trading means following signals, staking only small amounts, and stopping when you lose — exactly as explained above.">
+        Tofauti kati ya KAMARI na BIASHARA (trading) siyo soko lenyewe — ni JINSI mtu anavyotumia fedha zake. Kamari ni kuweka fedha bila mpango, bila kufuata signal, ukitegemea bahati tu na tamaa ya kupata pesa haraka. Biashara yenye mafanikio ni kufuata signal, kuweka kiasi kidogo tu, na kusimama ukipoteza — kama tulivyoeleza hapo juu.
+      </div>
+    </div>
+
+    <div class="rule-item">
+      <div class="rule-dot">3</div>
+      <div class="rule-txt" data-sw="<b>Watu wanaofaidika kwa muda mrefu, kwenye Binary au Forex, ni wale wanaojua kutumia fedha zao vizuri</b> — hawaweki fedha ambazo hawawezi kupoteza, hawavunji mpango wao kwa tamaa, na wanajua wakati wa kusimama. Hakuna mtu mwenye uhakika wa kushinda kila siku — hata mwenye mpango mzuri anaweza kupoteza siku fulani. Tofauti ni kwamba hasara yake haimuumizi sana, kwa sababu hakuweka kila kitu kwenye trade moja." data-en="<b>People who profit long-term, in either Binary or Forex, are those who know how to use their money well</b> — they don't stake money they can't afford to lose, they don't break their plan out of greed, and they know when to stop. No one is guaranteed to win every day — even someone with a good plan can lose on a given day. The difference is the loss doesn't hurt them badly, because they never put everything into one trade.">
+        <b>Watu wanaofaidika kwa muda mrefu, kwenye Binary au Forex, ni wale wanaojua kutumia fedha zao vizuri</b> — hawaweki fedha ambazo hawawezi kupoteza, hawavunji mpango wao kwa tamaa, na wanajua wakati wa kusimama. Hakuna mtu mwenye uhakika wa kushinda kila siku — hata mwenye mpango mzuri anaweza kupoteza siku fulani. Tofauti ni kwamba hasara yake haimuumizi sana, kwa sababu hakuweka kila kitu kwenye trade moja.
+      </div>
+    </div>
+
+    <div class="rule-item">
+      <div class="rule-dot">4</div>
+      <div class="rule-txt" data-sw="Kuhusu 'Forex ni utapeli' — Forex lenyewe ni soko halali linalotumika duniani kote, hata na mabenki makubwa kila siku. Tatizo la wizi mara nyingi halitoki kwenye soko lenyewe, bali kwa <b>watu wanaojiita 'ma-manager' wanaosema 'niletee pesa nikufanyie biashara'</b> kisha wakaiba pesa zako — ndio maana tunakwambia epuka hao hapa chini." data-en="Regarding 'Forex is a scam' — Forex itself is a legitimate market used all over the world, even by major banks every day. The theft problem usually doesn't come from the market itself, but from <b>people who call themselves 'managers' and say 'send me money and I'll trade for you'</b> and then steal your money — which is why we tell you to avoid them below.">
+        Kuhusu 'Forex ni utapeli' — Forex lenyewe ni soko halali linalotumika duniani kote, hata na mabenki makubwa kila siku. Tatizo la wizi mara nyingi halitoki kwenye soko lenyewe, bali kwa <b>watu wanaojiita 'ma-manager' wanaosema 'niletee pesa nikufanyie biashara'</b> kisha wakaiba pesa zako — ndio maana tunakwambia epuka hao hapa chini.
+      </div>
+    </div>
   </div>
 
   <div class="card">
@@ -399,6 +487,63 @@ function runCompounding(){
   document.getElementById('compTableWrap').style.display = 'block';
 }
 document.getElementById('compRunBtn').addEventListener('click', runCompounding);
+
+// ---- Calculator 4: Martingale ----
+function runMartingale(){
+  let start = parseFloat(document.getElementById('martStart').value);
+  let multiplier = parseFloat(document.getElementById('martMultiplier').value);
+  let payout = parseFloat(document.getElementById('martPayout').value);
+  let steps = parseInt(document.getElementById('martSteps').value, 10);
+
+  if(isNaN(start) || start <= 0) start = 1;
+  if(isNaN(multiplier) || multiplier < 1) multiplier = 2;
+  if(isNaN(payout) || payout <= 0) payout = 92;
+  if(isNaN(steps) || steps <= 0) steps = 6;
+  if(steps > 12) steps = 12;
+
+  const sw = isSw();
+  const L = {
+    trade: sw ? 'Trade' : 'Trade',
+    stake: sw ? 'Umeweka' : 'You Staked',
+    lose: sw ? 'Ukipoteza Hapa' : 'If You Lose Here',
+    loseTot: sw ? 'Hasara Jumla Sasa' : 'Total Loss So Far',
+    win: sw ? 'Ukishinda Hapa — Faida' : 'If You Win Here — Profit',
+    winTot: sw ? 'Jumla Utakayopokea' : 'Total You Would Receive',
+    net: sw ? 'Akaunti Ukilinganisha na Kabla ya Kuanza' : 'Account vs. Before You Started'
+  };
+
+  const wrap = document.getElementById('martResultsWrap');
+  wrap.innerHTML = '';
+
+  let stake = start;
+  let priorLoss = 0;
+
+  for(let i = 1; i <= steps; i++){
+    const profitIfWin = stake * (payout / 100);
+    const totalIfWin = stake + profitIfWin;
+    const netIfWin = profitIfWin - priorLoss;
+    const cumulativeLossIfLose = priorLoss + stake;
+    const netClass = netIfWin >= 0 ? 'net-pos' : 'net-neg';
+    const netSign = netIfWin >= 0 ? '+' : '';
+
+    const block = document.createElement('div');
+    block.className = 'mart-step';
+    block.innerHTML =
+      '<div class="mart-step-head"><span>' + L.trade + ' #' + i + '</span><span>' + L.stake + ': $' + stake.toFixed(2) + '</span></div>' +
+      '<div class="mart-row"><span>' + L.lose + '</span><b class="mv-loss">-$' + stake.toFixed(2) + '</b></div>' +
+      '<div class="mart-row"><span>' + L.loseTot + '</span><b class="mv-loss">$' + cumulativeLossIfLose.toFixed(2) + '</b></div>' +
+      '<div class="mart-row"><span>' + L.win + '</span><b class="mv-win">+$' + profitIfWin.toFixed(2) + '</b></div>' +
+      '<div class="mart-row"><span>' + L.winTot + '</span><b class="mv-win">$' + totalIfWin.toFixed(2) + '</b></div>' +
+      '<div class="mart-row net-row"><span>' + L.net + '</span><b class="' + netClass + '">' + netSign + '$' + netIfWin.toFixed(2) + '</b></div>';
+    wrap.appendChild(block);
+
+    priorLoss += stake;
+    stake *= multiplier;
+  }
+
+  wrap.style.display = 'block';
+}
+document.getElementById('martRunBtn').addEventListener('click', runMartingale);
 </script>
 </body>
 </html>
