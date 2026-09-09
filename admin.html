@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Evalon Admin — Dashibodi</title>
+<style>
+  :root{
+    --bg:#05070D; --panel:rgba(20,26,45,0.72); --panel-2:rgba(255,255,255,0.045); --line:rgba(255,255,255,0.09);
+    --gold:#FFB020; --gold-soft:#FFD37A; --green:#00E5A0; --red:#FF4D5E;
+    --text:#F6F8FC; --sub:#8C97BD; --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;
+    min-height:100vh;padding:20px 16px 60px;}
+  .wrap{max-width:720px;margin:0 auto;}
+  h1{font-size:20px;margin:0 0 4px;}
+  .sub{color:var(--sub);font-size:13px;margin-bottom:20px;}
+
+  .refresh-btn{background:linear-gradient(135deg,var(--gold),#C97A1F);color:#20130A;
+    border:none;border-radius:10px;padding:9px 16px;font-weight:700;font-size:13px;cursor:pointer;}
+
+  .stats-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+  .stat-card{flex:1;min-width:100px;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;padding:14px;text-align:center;}
+  .stat-num{font-size:22px;font-weight:800;color:var(--gold-soft);}
+  .stat-label{font-size:11px;color:var(--sub);margin-top:4px;}
+
+  .top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;}
+
+  .log-item{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;}
+  .log-time{font-size:11px;color:var(--sub);margin-bottom:8px;}
+  .log-user{background:var(--panel-2);border-radius:8px;padding:8px 10px;font-size:13px;margin-bottom:6px;}
+  .log-user b{color:var(--gold-soft);}
+  .log-ai{background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.15);border-radius:8px;
+    padding:8px 10px;font-size:13px;white-space:pre-wrap;}
+  .log-ai b{color:var(--green);}
+  .empty-note{color:var(--sub);font-size:13px;text-align:center;padding:30px 0;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>📊 Evalon Admin Dashboard</h1>
+  <div class="sub">Mazungumzo ya AI na takwimu za wageni</div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num" id="statVisitors">–</div><div class="stat-label">Wageni Leo</div></div>
+    <div class="stat-card"><div class="stat-num" id="statMsgsToday">–</div><div class="stat-label">Ujumbe Leo</div></div>
+    <div class="stat-card"><div class="stat-num" id="statMsgs30">–</div><div class="stat-label">Ujumbe (Siku 30)</div></div>
+  </div>
+
+  <div class="top-row">
+    <strong style="font-size:14px;">Mazungumzo ya Karibuni</strong>
+    <button type="button" class="refresh-btn" id="refreshBtn">🔄 Onyesha upya</button>
+  </div>
+
+  <div id="logsContainer"></div>
+</div>
+
+<script>
+(function(){
+  const WORKER_URL = 'https://ai-assistant.vip-signal.workers.dev'; // badilisha kama URL yako ni tofauti
+  const refreshBtn = document.getElementById('refreshBtn');
+  const logsContainer = document.getElementById('logsContainer');
+
+  function fmtTime(ts){
+    const d = new Date(ts);
+    return d.toLocaleString('sw-TZ', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  async function loadStats(){
+    const res = await fetch(WORKER_URL + '/admin/stats');
+    const data = await res.json();
+    if(!data.ok) return;
+    document.getElementById('statVisitors').textContent = data.visitorsToday;
+    document.getElementById('statMsgsToday').textContent = data.messagesToday;
+    document.getElementById('statMsgs30').textContent = data.messagesLast30Days;
+  }
+
+  async function loadLogs(){
+    const res = await fetch(WORKER_URL + '/admin/logs?limit=50');
+    const data = await res.json();
+    if(!data.ok) return;
+
+    logsContainer.innerHTML = '';
+    if(!data.logs.length){
+      logsContainer.innerHTML = '<div class="empty-note">Hakuna mazungumzo bado.</div>';
+      return;
+    }
+    data.logs.forEach(function(log){
+      const item = document.createElement('div');
+      item.className = 'log-item';
+      const imgNote = log.hadImage ? ' 📷' : '';
+      item.innerHTML =
+        '<div class="log-time">' + fmtTime(log.ts) + ' — ' + (log.sessionId || 'anon').slice(0, 14) + imgNote + '</div>' +
+        '<div class="log-user"><b>Mtumiaji:</b> ' + escapeHtml(log.userMessage || '(picha tu)') + '</div>' +
+        '<div class="log-ai"><b>AI:</b> ' + escapeHtml(log.aiReply || '') + '</div>';
+      logsContainer.appendChild(item);
+    });
+  }
+
+  function loadAll(){
+    loadStats();
+    loadLogs();
+  }
+
+  refreshBtn.addEventListener('click', loadAll);
+  loadAll();
+})();
+</script>
+</body>
+</html>
