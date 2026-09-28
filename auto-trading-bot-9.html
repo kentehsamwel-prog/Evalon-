@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Auto Trading Bot is temporarily unavailable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#070B14; --panel:#0E1524; --line:rgba(255,255,255,0.08);
+    --text:#F3F5FA; --sub:#93A0C2; --gold:#FFB020; --gold-deep:#C97A1F; --tg:#2AABEE;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;background:var(--ink);color:var(--text);font-family:'Manrope',Arial,sans-serif;
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;padding-top:max(24px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom));
+    background-image:
+      radial-gradient(600px 300px at 50% 0%, rgba(255,176,32,0.10), transparent 70%),
+      radial-gradient(500px 300px at 100% 100%, rgba(42,171,238,0.07), transparent 70%);
+  }
+  .card{
+    width:100%;max-width:440px;background:var(--panel);border:1px solid var(--line);
+    border-radius:22px;padding:30px 26px 26px;text-align:center;
+    box-shadow:0 24px 60px rgba(0,0,0,0.45);
+  }
+  .chart{width:100%;height:120px;margin:0 0 20px;display:block;}
+  .grid line{stroke:rgba(255,255,255,0.05);stroke-width:1;}
+  .line{fill:none;stroke:var(--gold);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
+    stroke-dasharray:520;stroke-dashoffset:520;animation:draw 2.4s ease-out forwards;}
+  .area{fill:url(#fade);opacity:0;animation:show 1s 1.6s ease-out forwards;}
+  .dot{fill:var(--gold);opacity:0;animation:show .3s 2.3s forwards;}
+  .ring{fill:none;stroke:var(--gold);stroke-width:1.5;opacity:0;transform-origin:292px 74px;
+    animation:pulse 2s 2.4s ease-out infinite;}
+  @keyframes draw{to{stroke-dashoffset:0;}}
+  @keyframes show{to{opacity:1;}}
+  @keyframes pulse{0%{opacity:.7;transform:scale(.6);}100%{opacity:0;transform:scale(2.4);}}
+
+  h1{font-family:'Sora',sans-serif;font-size:24px;line-height:1.25;font-weight:700;margin:0 0 12px;letter-spacing:-0.3px;}
+  p{font-size:15px;line-height:1.65;color:var(--sub);margin:0 auto 10px;max-width:34ch;}
+  .status{
+    display:inline-flex;align-items:center;gap:8px;margin:6px 0 18px;padding:7px 14px;border-radius:999px;
+    background:rgba(255,176,32,0.10);border:1px solid rgba(255,176,32,0.30);color:var(--gold);font-size:13px;font-weight:600;
+  }
+  .status i{width:8px;height:8px;border-radius:50%;background:var(--gold);display:block;}
+  .btn{
+    display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:14px;padding:15px;
+    border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;font-family:inherit;
+  }
+  .tg{background:linear-gradient(135deg,#37B7F5,#1E8FD0);color:#04121c;}
+  .tg:hover{filter:brightness(1.06);}
+  .home{border:1px solid var(--line);color:var(--text);background:transparent;}
+  .home:hover{background:rgba(255,255,255,0.04);}
+  .btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
+  .note{margin-top:18px;font-size:12.5px;color:#6C789B;}
+  @media (prefers-reduced-motion:reduce){
+    .line{animation:none;stroke-dashoffset:0;} .area,.dot{animation:none;opacity:1;} .ring{display:none;}
+  }
+</style>
+</head>
+<body>
+  <main class="card">
+    <svg class="chart" viewBox="0 0 340 120" role="img" aria-label="Trading chart paused">
+      <defs>
+        <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#FFB020" stop-opacity="0.22"/>
+          <stop offset="1" stop-color="#FFB020" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <g class="grid">
+        <line x1="0" y1="30" x2="340" y2="30"/><line x1="0" y1="60" x2="340" y2="60"/>
+        <line x1="0" y1="90" x2="340" y2="90"/>
+      </g>
+      <path class="area" d="M10 96 L45 82 L80 90 L115 62 L150 70 L185 40 L220 52 L255 74 L292 74 L292 120 L10 120 Z"/>
+      <path class="line" d="M10 96 L45 82 L80 90 L115 62 L150 70 L185 40 L220 52 L255 74 L292 74"/>
+      <path d="M292 74 L330 74" stroke="rgba(255,176,32,0.35)" stroke-width="2" stroke-dasharray="4 6" fill="none"/>
+      <circle class="ring" cx="292" cy="74" r="10"/>
+      <circle class="dot" cx="292" cy="74" r="5"/>
+    </svg>
+
+    <h1>Auto Trading Bot is temporarily unavailable</h1>
+    <div class="status"><i></i>We're working on it</div>
+    <p>The bot is offline for now. We'll let you know as soon as it's back.</p>
+    <p>Have a question about your access? Message our support team.</p>
+
+    <a class="btn tg" href="https://t.me/evalonwinnersbot" target="_blank" rel="noopener">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.78 15.6l-.4 4.2c.58 0 .83-.25 1.13-.55l2.7-2.58 5.6 4.1c1.03.57 1.75.27 2.03-.95l3.67-17.2c.33-1.5-.55-2.1-1.55-1.72L1.4 10.2c-1.47.58-1.45 1.4-.25 1.77l5.5 1.72L19.4 6.6c.6-.4 1.15-.18.7.22z"/></svg>
+      Contact support on Telegram
+    </a>
+    <a class="btn home" href="index.html">Back to home</a>
+  </main>
+</body>
+</html>
